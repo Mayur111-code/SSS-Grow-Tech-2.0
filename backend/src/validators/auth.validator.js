@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { imageField } from './common.validator.js';
 
 export const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(80),
@@ -38,7 +39,7 @@ export const updateProfileSchema = z.object({
   phone: z.string().max(30).optional().nullable(),
   company: z.string().max(100).optional().nullable(),
   bio: z.string().max(1000).optional().nullable(),
-  avatar: z.string().max(500).optional().nullable(),
+  avatar: imageField,
 });
 
 export const saveProjectSchema = z.object({

@@ -106,13 +106,13 @@ const googleLogin = asyncHandler(async (req, res) => {
     user = await User.create({
       name: name || email.split('@')[0],
       email,
-      avatar: picture || '',
+      avatar: picture ? { url: picture, publicId: '' } : null,
       googleId: sub,
       isVerified: true,
     });
   } else {
     user.googleId = sub;
-    if (picture && !user.avatar) user.avatar = picture;
+    if (picture && !user.avatar) user.avatar = { url: picture, publicId: '' };
     await user.save();
   }
   if (!user.isActive) throw new ApiError(403, 'Your account has been deactivated.');
@@ -177,15 +177,22 @@ const updateProfile = asyncHandler(async (req, res) => {
   for (const field of allowed) {
     if (req.body[field] !== undefined) updates[field] = req.body[field];
   }
-  if (req.file && req.file.path) {
-    const result = await cloudinaryService.uploadImage({ path: req.file.path });
-    const current = await User.findById(req.user._id);
-    if (current.avatar && current.avatar.includes('cloudinary.com')) {
-      await cloudinaryService.deleteFile(current.avatar);
-    }
-    updates.avatar = result.url;
+  if (req.file?.buffer) {
+    const result = await cloudinaryService.uploadImage({ buffer: req.file.buffer });
+    updates.avatar = { url: result.url, publicId: result.publicId };
   } else if (req.body.avatar !== undefined) {
-    updates.avatar = req.body.avatar;
+    updates.avatar = req.body.avatar || null;
+  }
+
+  if (updates.avatar !== undefined) {
+    const current = await User.findById(req.user._id);
+    const oldPublicId =
+      current.avatar && typeof current.avatar === 'object' ? current.avatar.publicId
+        : typeof current.avatar === 'string' ? cloudinaryService.extractPublicId(current.avatar) : null;
+    const newPublicId = updates.avatar && typeof updates.avatar === 'object' ? updates.avatar.publicId : null;
+    if (oldPublicId && oldPublicId !== newPublicId) {
+      await cloudinaryService.deleteImage(oldPublicId);
+    }
   }
 
   const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true, runValidators: true })
@@ -195,8 +202,8 @@ const updateProfile = asyncHandler(async (req, res) => {
 
 const deleteAccount = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-  if (user.avatar && user.avatar.includes('cloudinary.com')) {
-    await cloudinaryService.deleteFile(user.avatar);
+  if (user.avatar && typeof user.avatar === 'object' && user.avatar.publicId) {
+    await cloudinaryService.deleteImage(user.avatar.publicId);
   }
   await User.findByIdAndDelete(req.user._id);
   clearAuthCookies(res);

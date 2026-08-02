@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { ImageRef } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -48,10 +49,12 @@ export function truncate(text?: string, length = 120): string {
   return text.length > length ? `${text.slice(0, length)}...` : text;
 }
 
-export function resolveImageUrl(url?: string, fallback = "/sssgrow.jpg"): string {
+export function resolveImageUrl(url?: string | ImageRef | null, fallback = "/sssgrow.jpg"): string {
   if (!url) return fallback;
-  if (url.startsWith("http") || url.startsWith("/")) return url;
-  return `${API_URL.replace("/api/v1", "")}${url}`;
+  const value = typeof url === "string" ? url : url.url;
+  if (!value) return fallback;
+  if (value.startsWith("http") || value.startsWith("/")) return value;
+  return `${API_URL.replace("/api/v1", "")}${value}`;
 }
 
 export function fileToDataUrl(file: File): Promise<string> {
@@ -64,8 +67,10 @@ export function fileToDataUrl(file: File): Promise<string> {
 }
 
 export function isValidImageType(file: File): boolean {
-  return ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml", "image/gif"].includes(file.type);
+  return ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml"].includes(file.type);
 }
+
+export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 export function isValidResumeType(file: File): boolean {
   return ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type);

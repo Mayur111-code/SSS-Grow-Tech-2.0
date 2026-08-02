@@ -1,87 +1,67 @@
 import cloudinary from '../config/cloudinary.js';
 import { ApiError } from '../utils/ApiError.js';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const uploadsDir = path.resolve(__dirname, '../../uploads');
+const FOLDER = 'sss-grow-tech';
 
 const isConfigured = () => {
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME || 'demo';
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME || '';
   const apiKey = process.env.CLOUDINARY_API_KEY || '';
   const apiSecret = process.env.CLOUDINARY_API_SECRET || '';
-  const hasPlaceholder = cloudName === 'demo' || apiKey.includes('your_') || apiSecret.includes('your_');
+  const hasPlaceholder = cloudName === 'demo' || !cloudName || apiKey.includes('your_') || apiSecret.includes('your_');
   return !hasPlaceholder && Boolean(cloudName && apiKey && apiSecret);
 };
 
-const publicUrlFor = (localPath) => {
-  const base = process.env.API_BASE_URL || 'http://localhost:5000';
-  const filename = path.basename(localPath);
-  return `${base}/uploads/${filename}`;
-};
-
-const extractPublicId = (url) => {
-  if (!url) return null;
+export const extractPublicId = (url) => {
+  if (!url || typeof url !== 'string') return null;
+  if (!url.includes('cloudinary.com')) return null;
   const parts = url.split('/');
-  const last = parts[parts.length - 1];
-  if (!last) return null;
-  return last.replace(/\.[^.]+$/, '');
+  const versionIndex = parts.findIndex((p) => /^v\d+$/.test(p));
+  if (versionIndex !== -1 && versionIndex < parts.length - 1) {
+    const withExt = parts.slice(versionIndex + 1).join('/');
+    return withExt.replace(/\.[^.]+$/, '');
+  }
+  return null;
 };
 
-export const uploadFile = async ({ path: filePath, folder = 'sss-grow-tech', resourceType = 'auto' }) => {
-  if (!filePath || !fs.existsSync(filePath)) {
+const uploadBuffer = async ({ buffer, folder = FOLDER, resourceType = 'image' }) => {
+  if (!isConfigured()) {
+    throw new ApiError(500, 'Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET.');
+  }
+  if (!buffer || buffer.length === 0) {
     throw new ApiError(400, 'No file provided to upload');
   }
-
-  if (!isConfigured()) {
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    const ext = path.extname(filePath);
-    const dest = path.join(uploadsDir, `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
-    fs.copyFileSync(filePath, dest);
-    fs.unlink(filePath, () => {});
-    return { url: publicUrlFor(dest), publicId: `local:${path.basename(dest)}` };
-  }
-
-  const result = await cloudinary.uploader.upload(filePath, {
-    folder,
-    resource_type: resourceType,
-    overwrite: true,
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: resourceType, timeout: 60000 },
+      (error, result) => {
+        if (error) {
+          reject(new ApiError(500, `Upload to Cloudinary failed: ${error.message}`));
+          return;
+        }
+        resolve({ url: result.secure_url, publicId: result.public_id });
+      }
+    );
+    stream.end(buffer);
   });
-  fs.unlink(filePath, () => {});
-  return { url: result.secure_url, publicId: result.public_id };
 };
 
-export const uploadImage = async ({ path: filePath, folder = 'sss-grow-tech' }) => {
-  return uploadFile({ path: filePath, folder, resourceType: 'image' });
-};
-
-export const uploadResume = async ({ path: filePath, folder = 'sss-grow-tech/resumes' }) => {
-  return uploadFile({ path: filePath, folder, resourceType: 'auto' });
-};
-
-export const deleteFile = async (url) => {
-  if (!url) return { skipped: true };
-  if (url.includes('/uploads/')) {
-    const filename = path.basename(new URL(url).pathname);
-    const localPath = path.join(uploadsDir, filename);
-    if (fs.existsSync(localPath)) {
-      fs.unlinkSync(localPath);
-      return { deleted: true };
-    }
-    return { skipped: true };
+export const uploadImage = async ({ buffer, folder = FOLDER }) => {
+  if (buffer && buffer.length > 5 * 1024 * 1024) {
+    throw new ApiError(400, 'Image is too large. Maximum file size is 5MB.');
   }
-  if (!url.includes('cloudinary.com') || !isConfigured()) {
-    return { skipped: true };
-  }
+  return uploadBuffer({ buffer, folder, resourceType: 'image' });
+};
+
+export const uploadResume = async ({ buffer, folder = `${FOLDER}/resumes` }) => {
+  return uploadBuffer({ buffer, folder, resourceType: 'auto' });
+};
+
+export const deleteImage = async (publicId) => {
+  if (!publicId) return { skipped: true };
+  if (!isConfigured()) return { skipped: true };
   try {
-    const publicId = extractPublicId(url);
-    if (!publicId) return { skipped: true };
-    await cloudinary.uploader.destroy(publicId.split('/').slice(0, 2).join('/'));
-    return { deleted: true };
+    const result = await cloudinary.uploader.destroy(publicId);
+    return { deleted: result.result === 'ok' };
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Failed to delete cloudinary file:', error.message);
@@ -89,14 +69,27 @@ export const deleteFile = async (url) => {
   }
 };
 
-export const deleteMany = async (urls = []) => {
+export const deleteFile = async (ref) => {
+  if (!ref) return { skipped: true };
+  if (typeof ref === 'object' && ref.publicId) {
+    return deleteImage(ref.publicId);
+  }
+  if (typeof ref === 'string') {
+    const publicId = extractPublicId(ref);
+    if (!publicId) return { skipped: true };
+    return deleteImage(publicId);
+  }
+  return { skipped: true };
+};
+
+export const deleteMany = async (refs = []) => {
   const results = [];
-  for (const url of urls) {
-    results.push(await deleteFile(url));
+  for (const ref of refs) {
+    results.push(await deleteFile(ref));
   }
   return results;
 };
 
-export const cloudinaryService = { uploadFile, uploadImage, uploadResume, deleteFile, deleteMany, isConfigured };
+export const cloudinaryService = { uploadFile: uploadBuffer, uploadImage, uploadResume, deleteFile, deleteImage, deleteMany, isConfigured, extractPublicId };
 
 export default cloudinaryService;

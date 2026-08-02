@@ -22,7 +22,7 @@ export async function generateMetadata({
       openGraph: {
         title: service.title,
         description: service.shortDescription,
-        images: service.image ? [service.image] : [],
+        images: service.image?.url ? [service.image.url] : [],
       },
     };
   } catch {

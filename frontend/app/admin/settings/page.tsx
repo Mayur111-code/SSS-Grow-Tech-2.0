@@ -10,7 +10,7 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { PageLoader } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import api, { getErrorMessage } from "@/lib/api";
-import type { ApiResponse } from "@/types";
+import type { ApiResponse, ImageRef } from "@/types";
 
 interface SettingItem {
   key: string;
@@ -36,7 +36,7 @@ const groupOrder = ["general", "branding", "hero", "seo", "contact", "social", "
 export default function AdminSettingsPage() {
   const { success, error } = useToast();
   const [values, setValues] = useState<Record<string, unknown>>({});
-  const [imageOverrides, setImageOverrides] = useState<Record<string, string>>({});
+  const [imageOverrides, setImageOverrides] = useState<Record<string, ImageRef | null>>({});
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
@@ -125,8 +125,8 @@ export default function AdminSettingsPage() {
                 <div key={key}>
                   {isImage(key) ? (
                     <ImageUpload
-                      value={imageOverrides[key] || (values[key] as string) || ""}
-                      onChange={(url) => setImageOverrides((prev) => ({ ...prev, [key]: url }))}
+                      value={imageOverrides[key] ?? (values[key] as ImageRef | string | null) ?? null}
+                      onChange={(ref) => setImageOverrides((prev) => ({ ...prev, [key]: ref }))}
                       label={labelFor(key)}
                       aspect="aspect-[4/3]"
                     />

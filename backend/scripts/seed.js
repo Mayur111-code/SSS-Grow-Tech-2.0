@@ -15,10 +15,9 @@ import SiteSetting from '../src/models/SiteSetting.js';
 dotenv.config();
 
 export const seedAdmin = async () => {
-  const email = process.env.ADMIN_EMAIL || 'admin@sssgrowtech.com';
-  const password = process.env.ADMIN_PASSWORD || 'Admin@12345';
-  const name = process.env.ADMIN_NAME || 'SSS Grow Admin';
-
+  const email = process.env.ADMIN_EMAIL 
+  const password = process.env.ADMIN_PASSWORD 
+  const name = process.env.ADMIN_NAME 
   const existing = await User.findOne({ email }).select('+password');
   if (existing) {
     if (existing.role !== 'admin') {
@@ -180,7 +179,6 @@ const seedSampleData = async () => {
       category: webCat._id,
       technologies: [nextjs._id, node._id, mongo._id, ts._id, tailwind._id],
       features: ['Headless commerce', 'AI recommendations', 'Real-time inventory', 'Secure payments', 'Sub-100ms page loads'],
-      cover: '',
       liveUrl: 'https://example.com',
       githubUrl: 'https://github.com/sssgrowtech',
       featured: true,
@@ -198,7 +196,6 @@ const seedSampleData = async () => {
       category: aiCat._id,
       technologies: [react._id, node._id, mongo._id, ai._id],
       features: ['Video consultations', 'AI symptom checker', 'EHR integration', 'HIPAA compliant', 'Multi-language support'],
-      cover: '',
       featured: true,
       status: 'published',
     },
@@ -214,7 +211,6 @@ const seedSampleData = async () => {
       category: mobileCat._id,
       technologies: [react._id, node._id, mongo._id, cloud._id],
       features: ['Biometric authentication', 'Real-time analytics', 'AI budgeting', 'Instant transfers', 'Offline transactions'],
-      cover: '',
       featured: true,
       status: 'published',
     },
@@ -230,7 +226,6 @@ const seedSampleData = async () => {
       category: cloudCat._id,
       technologies: [cloud._id, node._id, mongo._id],
       features: ['Automated CI/CD', 'Infrastructure as Code', 'Centralized logging', 'Zero-downtime deploys'],
-      cover: '',
       featured: false,
       status: 'published',
     },
@@ -242,8 +237,6 @@ const seedSampleData = async () => {
       slug: 'why-nextjs-16-is-the-future-of-web-development',
       excerpt: 'Next.js 16 brings powerful new features that make building fast, scalable web applications easier than ever.',
       content: `<h2>The Next Generation of React Frameworks</h2><p>Next.js continues to dominate the React ecosystem with innovations in server components, caching and developer experience.</p><h3>Key Features</h3><ul><li>App Router with advanced routing</li><li>Automatic performance optimizations</li><li>Improved image handling</li></ul><p>Businesses that adopt modern frameworks ship faster and deliver better experiences.</p>`,
-      thumbnail: '',
-      banner: '',
       author: 'SSS Grow Tech Team',
       tags: ['Next.js', 'React', 'Web Development'],
       category: webCat._id,
@@ -255,8 +248,6 @@ const seedSampleData = async () => {
       slug: 'how-ai-is-transforming-customer-support',
       excerpt: 'AI-powered chatbots and assistants are revolutionizing how businesses serve their customers around the clock.',
       content: `<h2>AI in Customer Support</h2><p>Modern AI assistants can handle 80% of routine support queries, freeing human agents to focus on complex issues.</p><h3>Implementation Strategies</h3><ul><li>Start with FAQ automation</li><li>Integrate with your knowledge base</li><li>Seamless handoff to humans</li></ul>`,
-      thumbnail: '',
-      banner: '',
       author: 'SSS Grow Tech Team',
       tags: ['AI', 'Automation', 'Customer Support'],
       category: aiCat._id,
@@ -268,8 +259,6 @@ const seedSampleData = async () => {
       slug: 'complete-guide-to-cloud-migration',
       excerpt: 'A practical step-by-step guide to moving your infrastructure to the cloud without downtime or surprises.',
       content: `<h2>Cloud Migration Done Right</h2><p>Cloud migration is a journey. Start with a thorough assessment and move workloads incrementally.</p><h3>Migration Phases</h3><ul><li>Assess and inventory</li><li>Design target architecture</li><li>Execute in waves</li><li>Optimize continuously</li></ul>`,
-      thumbnail: '',
-      banner: '',
       author: 'SSS Grow Tech Team',
       tags: ['Cloud', 'DevOps', 'AWS'],
       category: cloudCat._id,
@@ -402,7 +391,7 @@ const seedSampleData = async () => {
 if (process.argv[1] && process.argv[1].endsWith('seed.js')) {
   const run = async () => {
     try {
-      await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/sss_grow_tech');
+      await mongoose.connect(process.env.MONGODB_URI );
       await seedSampleData();
       process.exit(0);
     } catch (error) {

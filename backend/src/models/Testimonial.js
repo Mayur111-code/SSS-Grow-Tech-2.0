@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { imageRefField } from './imageRef.js';
 
 const testimonialSchema = new mongoose.Schema(
   {
@@ -16,10 +17,7 @@ const testimonialSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
-    avatar: {
-      type: String,
-      default: '',
-    },
+    avatar: imageRefField,
     content: {
       type: String,
       required: [true, 'Testimonial content is required'],

@@ -13,7 +13,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import api, { getErrorMessage, tokenStore } from "@/lib/api";
-import type { ApiResponse, User as UserType } from "@/types";
+import { resolveImageUrl } from "@/lib/utils";
+import type { ApiResponse, ImageRef, User as UserType } from "@/types";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -38,7 +39,7 @@ type PasswordForm = z.infer<typeof passwordSchema>;
 export default function DashboardPage() {
   const { user, setUser, refreshProfile, logout } = useAuth();
   const { success, error } = useToast();
-  const [avatar, setAvatar] = useState(user?.avatar || "");
+  const [avatar, setAvatar] = useState<ImageRef | null>(user?.avatar ?? null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -110,8 +111,8 @@ export default function DashboardPage() {
             </h3>
             <div className="mt-5 flex flex-col items-center gap-4">
               <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-brand-500/30">
-                {user?.avatar ? (
-                  <Image src={user.avatar} alt={user.name} fill className="object-cover" sizes="96px" unoptimized />
+                {user?.avatar?.url ? (
+                  <Image src={resolveImageUrl(user.avatar)} alt={user.name} fill className="object-cover" sizes="96px" unoptimized />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-500 to-accent-600 font-display text-2xl font-bold text-white">
                     {user?.name?.charAt(0).toUpperCase()}

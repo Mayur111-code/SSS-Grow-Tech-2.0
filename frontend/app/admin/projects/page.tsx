@@ -20,7 +20,7 @@ import { z } from "zod";
 import api, { getErrorMessage } from "@/lib/api";
 import { resolveImageUrl } from "@/lib/utils";
 import { useAdminList } from "@/services/queries";
-import type { Category, Project } from "@/types";
+import type { Category, Project, ImageRef } from "@/types";
 
 const projectFormSchema = z.object({
   title: z.string().min(3, "Title is required"),
@@ -45,7 +45,7 @@ export default function AdminProjectsPage() {
   } = useAdminResource<Project>("projects");
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [cover, setCover] = useState("");
+  const [cover, setCover] = useState<ImageRef | null>(null);
   const { data: categoriesData } = useAdminList<Category>("categories");
   const categories = categoriesData?.items || [];
 
@@ -68,21 +68,21 @@ export default function AdminProjectsPage() {
 
   const openCreate = () => {
     setEditing(null);
-    setCover("");
+    setCover(null);
     form.reset({ title: "", description: "", client: "", industry: "", location: "", year: new Date().getFullYear(), category: "", liveUrl: "", githubUrl: "", status: "published", featured: false });
     setFormOpen(true);
   };
 
   const openEdit = (item: Project) => {
     setEditing(item);
-    setCover(item.cover || "");
+    setCover(item.cover || null);
     setFormOpen(true);
   };
 
   const submit = async (data: ProjectForm) => {
     setSaving(true);
     try {
-      const payload = { ...data, cover: cover || "", category: data.category || null };
+      const payload = { ...data, cover, category: data.category || null };
       if (editing) {
         await api.patch(`/projects/${editing._id}`, payload);
         success("Project updated");
@@ -123,7 +123,7 @@ export default function AdminProjectsPage() {
             header: "Project",
             cell: (p) => (
               <div className="flex items-center gap-3">
-                {p.cover ? (
+                {p.cover?.url ? (
                   <div className="flex h-10 w-14 items-center justify-center overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
                     <img src={resolveImageUrl(p.cover)} alt={p.title} className="h-full w-full object-cover" />
                   </div>

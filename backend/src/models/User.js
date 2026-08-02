@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { imageRefField } from './imageRef.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -27,10 +28,7 @@ const userSchema = new mongoose.Schema(
       minlength: [8, 'Password must be at least 8 characters'],
       select: false,
     },
-    avatar: {
-      type: String,
-      default: '',
-    },
+    avatar: imageRefField,
     phone: {
       type: String,
       default: '',

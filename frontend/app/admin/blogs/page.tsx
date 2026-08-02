@@ -20,7 +20,7 @@ import { z } from "zod";
 import api, { getErrorMessage } from "@/lib/api";
 import { resolveImageUrl, formatDate } from "@/lib/utils";
 import { useAdminList } from "@/services/queries";
-import type { Blog, Category } from "@/types";
+import type { Blog, Category, ImageRef } from "@/types";
 
 const blogFormSchema = z.object({
   title: z.string().min(3, "Title is required"),
@@ -41,7 +41,7 @@ export default function AdminBlogsPage() {
   } = useAdminResource<Blog>("blogs");
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [thumbnail, setThumbnail] = useState("");
+  const [thumbnail, setThumbnail] = useState<ImageRef | null>(null);
   const { data: categoriesData } = useAdminList<Category>("categories");
   const categories = categoriesData?.items || [];
 
@@ -60,21 +60,21 @@ export default function AdminBlogsPage() {
 
   const openCreate = () => {
     setEditing(null);
-    setThumbnail("");
+    setThumbnail(null);
     form.reset({ title: "", excerpt: "", content: "", author: "", category: "", status: "published", featured: false });
     setFormOpen(true);
   };
 
   const openEdit = (item: Blog) => {
     setEditing(item);
-    setThumbnail(item.thumbnail || "");
+    setThumbnail(item.thumbnail || null);
     setFormOpen(true);
   };
 
   const submit = async (data: BlogForm) => {
     setSaving(true);
     try {
-      const payload = { ...data, thumbnail: thumbnail || "", category: data.category || null };
+      const payload = { ...data, thumbnail, category: data.category || null };
       if (editing) {
         await api.patch(`/blogs/${editing._id}`, payload);
         success("Blog updated");
@@ -115,7 +115,7 @@ export default function AdminBlogsPage() {
             header: "Post",
             cell: (b) => (
               <div className="flex items-center gap-3">
-                {b.thumbnail ? (
+                {b.thumbnail?.url ? (
                   <div className="flex h-10 w-14 items-center justify-center overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
                     <img src={resolveImageUrl(b.thumbnail)} alt={b.title} className="h-full w-full object-cover" />
                   </div>

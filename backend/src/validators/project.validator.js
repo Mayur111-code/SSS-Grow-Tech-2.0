@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { seoSchema } from './common.validator.js';
+import { seoSchema, imageField, imageFields } from './common.validator.js';
 
 const createProjectSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(150),
@@ -12,8 +12,8 @@ const createProjectSchema = z.object({
   category: z.string().min(1).optional().nullable().default(null),
   technologies: z.array(z.string()).optional().nullable().default([]),
   features: z.array(z.string()).optional().nullable().default([]),
-  gallery: z.array(z.string()).optional().nullable().default([]),
-  cover: z.string().max(500).optional().nullable().default(''),
+  gallery: imageFields,
+  cover: imageField,
   liveUrl: z.string().max(500).optional().nullable().default(''),
   githubUrl: z.string().max(500).optional().nullable().default(''),
   seo: seoSchema,

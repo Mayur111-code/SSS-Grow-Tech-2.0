@@ -37,6 +37,7 @@ export function CareerDetails({ slug }: { slug: string }) {
   const { success, error, info } = useToast();
   const router = useRouter();
   const [resumeUrl, setResumeUrl] = useState("");
+  const [resumePublicId, setResumePublicId] = useState("");
 
   const {
     register,
@@ -74,6 +75,7 @@ export function CareerDetails({ slug }: { slug: string }) {
         portfolioUrl: data.portfolioUrl || "",
         coverLetter: data.coverLetter,
         resumeUrl,
+        resumePublicId: resumePublicId || "",
       });
       success("Application submitted", "Our team will review your application and get back to you soon.");
       router.push("/dashboard/applications");
@@ -229,8 +231,9 @@ export function CareerDetails({ slug }: { slug: string }) {
                     <ResumeUpload
                       label="Resume (PDF, DOC, DOCX)"
                       value={resumeUrl}
-                      onChange={(url) => {
+                      onChange={(url, publicId) => {
                         setResumeUrl(url);
+                        setResumePublicId(publicId || "");
                         setValue("resumeUrl", url);
                       }}
                     />

@@ -28,11 +28,20 @@ const updateUser = asyncHandler(async (req, res) => {
   for (const field of allowed) {
     if (req.body[field] !== undefined) updates[field] = req.body[field];
   }
-  if (req.body.avatar !== undefined) updates.avatar = req.body.avatar;
-  if (req.file?.path) {
-    const result = await cloudinaryService.uploadImage({ path: req.file.path });
-    if (existing.avatar?.includes('cloudinary.com')) await cloudinaryService.deleteFile(existing.avatar);
-    updates.avatar = result.url;
+  if (req.body.avatar !== undefined) updates.avatar = req.body.avatar || null;
+  if (req.file?.buffer) {
+    const result = await cloudinaryService.uploadImage({ buffer: req.file.buffer });
+    updates.avatar = { url: result.url, publicId: result.publicId };
+  }
+
+  if (updates.avatar !== undefined) {
+    const oldPublicId =
+      existing.avatar && typeof existing.avatar === 'object' ? existing.avatar.publicId
+        : typeof existing.avatar === 'string' ? cloudinaryService.extractPublicId(existing.avatar) : null;
+    const newPublicId = updates.avatar && typeof updates.avatar === 'object' ? updates.avatar.publicId : null;
+    if (oldPublicId && oldPublicId !== newPublicId) {
+      await cloudinaryService.deleteImage(oldPublicId);
+    }
   }
 
   const user = await User.findByIdAndUpdate(id, updates, { new: true, runValidators: true }).select('-password -refreshToken');
@@ -58,7 +67,9 @@ const changeUserRole = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) throw new ApiError(404, 'User not found');
-  if (user.avatar?.includes('cloudinary.com')) await cloudinaryService.deleteFile(user.avatar);
+  if (user.avatar && typeof user.avatar === 'object' && user.avatar.publicId) {
+    await cloudinaryService.deleteImage(user.avatar.publicId);
+  }
   await User.findByIdAndDelete(req.params.id);
   res.status(200).json(new ApiResponse(200, null, 'User deleted successfully'));
 });
@@ -67,7 +78,9 @@ const bulkDeleteUsers = asyncHandler(async (req, res) => {
   const { ids } = req.body;
   const users = await User.find({ _id: { $in: ids } });
   for (const user of users) {
-    if (user.avatar?.includes('cloudinary.com')) await cloudinaryService.deleteFile(user.avatar);
+    if (user.avatar && typeof user.avatar === 'object' && user.avatar.publicId) {
+      await cloudinaryService.deleteImage(user.avatar.publicId);
+    }
   }
   await User.deleteMany({ _id: { $in: ids } });
   res.status(200).json(new ApiResponse(200, { deleted: ids.length }, 'Users deleted successfully'));

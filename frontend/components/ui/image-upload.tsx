@@ -6,15 +6,20 @@ import { ImagePlus, RefreshCw, Trash2, UploadCloud, Loader2, FileText } from "lu
 import { motion } from "framer-motion";
 import api, { getErrorMessage } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
-import { cn, fileToDataUrl, formatBytes, isValidImageType } from "@/lib/utils";
-import type { ApiResponse } from "@/types";
+import { cn, fileToDataUrl, formatBytes, isValidImageType, MAX_IMAGE_SIZE } from "@/lib/utils";
+import type { ApiResponse, ImageRef } from "@/types";
 
 interface ImageUploadProps {
-  value?: string;
-  onChange: (url: string) => void;
+  value?: string | ImageRef | null;
+  onChange: (ref: ImageRef | null) => void;
   label?: string;
   className?: string;
   aspect?: string;
+}
+
+function toUrl(value?: string | ImageRef | null): string {
+  if (!value) return "";
+  return typeof value === "string" ? value : value.url || "";
 }
 
 export function ImageUpload({ value, onChange, label, className, aspect = "aspect-video" }: ImageUploadProps) {
@@ -25,11 +30,11 @@ export function ImageUpload({ value, onChange, label, className, aspect = "aspec
 
   const handleFile = async (file: File) => {
     if (!isValidImageType(file)) {
-      errorToast("Invalid file type", "Please upload PNG, JPG, WEBP or SVG.");
+      errorToast("Invalid file type", "Please upload PNG, JPG, JPEG, WEBP or SVG.");
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      errorToast("File too large", "Maximum file size is 10MB.");
+    if (file.size > MAX_IMAGE_SIZE) {
+      errorToast("File too large", "Maximum file size is 5MB.");
       return;
     }
     setPreview(await fileToDataUrl(file));
@@ -37,10 +42,10 @@ export function ImageUpload({ value, onChange, label, className, aspect = "aspec
     try {
       const formData = new FormData();
       formData.append("image", file);
-      const response = await api.post<ApiResponse<{ url: string }>>("/upload/image", formData, {
+      const response = await api.post<ApiResponse<{ url: string; publicId: string }>>("/upload/image", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      onChange(response.data.data.url);
+      onChange({ url: response.data.data.url, publicId: response.data.data.publicId });
     } catch (err) {
       errorToast("Upload failed", getErrorMessage(err));
     } finally {
@@ -48,7 +53,7 @@ export function ImageUpload({ value, onChange, label, className, aspect = "aspec
     }
   };
 
-  const shownImage = value || preview;
+  const shownImage = toUrl(value) || preview;
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -76,7 +81,7 @@ export function ImageUpload({ value, onChange, label, className, aspect = "aspec
               <button
                 type="button"
                 onClick={() => {
-                  onChange("");
+                  onChange(null);
                   setPreview("");
                   if (inputRef.current) inputRef.current.value = "";
                 }}
@@ -99,7 +104,7 @@ export function ImageUpload({ value, onChange, label, className, aspect = "aspec
               <>
                 <UploadCloud className="h-8 w-8 text-brand-500" />
                 <span className="text-sm font-medium">Click to upload</span>
-                <span className="text-xs text-slate-400">PNG, JPG, WEBP, SVG</span>
+                <span className="text-xs text-slate-400">PNG, JPG, JPEG, WEBP, SVG</span>
               </>
             )}
           </button>
@@ -107,7 +112,7 @@ export function ImageUpload({ value, onChange, label, className, aspect = "aspec
         <input
           ref={inputRef}
           type="file"
-          accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+          accept="image/png,image/jpeg,image/webp,image/svg+xml"
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];

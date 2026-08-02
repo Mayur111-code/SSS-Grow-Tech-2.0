@@ -11,13 +11,14 @@ import { EmptyState } from "@/components/ui/data-table";
 import api, { getErrorMessage } from "@/lib/api";
 import { resolveImageUrl } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
+import type { ImageRef } from "@/types";
 
 interface SavedProject {
   _id: string;
   slug: string;
   title: string;
-  thumbnail?: string;
-  cover?: string;
+  thumbnail?: ImageRef | null;
+  cover?: ImageRef | null;
   client?: string;
   industry?: string;
 }

@@ -32,7 +32,7 @@ export default function AdminTestimonialsPage() {
           header: "Client",
           cell: (t) => (
             <div className="flex items-center gap-3">
-              {t.avatar ? (
+              {t.avatar?.url ? (
                 <img src={resolveImageUrl(t.avatar)} alt={t.name} className="h-9 w-9 rounded-full object-cover" />
               ) : (
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-accent-600 text-xs font-bold text-white">

@@ -1,10 +1,15 @@
 export type Role = "admin" | "user";
 
+export interface ImageRef {
+  url: string;
+  publicId?: string;
+}
+
 export interface User {
   _id: string;
   name: string;
   email: string;
-  avatar: string;
+  avatar: ImageRef | null;
   phone: string;
   company: string;
   bio: string;
@@ -80,7 +85,7 @@ export interface Service {
   slug: string;
   shortDescription: string;
   description: string;
-  image: string;
+  image: ImageRef | null;
   icon: string;
   category: string | Category | null;
   features: string[];
@@ -105,8 +110,8 @@ export interface Project {
   category: string | Category | null;
   technologies: (string | Technology)[];
   features: string[];
-  gallery: string[];
-  cover: string;
+  gallery: ImageRef[];
+  cover: ImageRef | null;
   liveUrl: string;
   githubUrl: string;
   seo: Seo;
@@ -121,8 +126,8 @@ export interface Blog {
   slug: string;
   excerpt: string;
   content: string;
-  thumbnail: string;
-  banner: string;
+  thumbnail: ImageRef | null;
+  banner: ImageRef | null;
   author: string;
   tags: string[];
   category: string | Category | null;
@@ -139,7 +144,7 @@ export interface Testimonial {
   name: string;
   role: string;
   company: string;
-  avatar: string;
+  avatar: ImageRef | null;
   content: string;
   rating: number;
   status: "active" | "inactive";

@@ -21,7 +21,7 @@ export async function generateMetadata({
       openGraph: {
         title: blog.title,
         description: blog.excerpt,
-        images: blog.thumbnail ? [blog.thumbnail] : [],
+        images: blog.thumbnail?.url ? [blog.thumbnail.url] : [],
         type: "article",
         publishedTime: blog.publishDate,
       },
@@ -29,7 +29,7 @@ export async function generateMetadata({
         card: "summary_large_image",
         title: blog.title,
         description: blog.excerpt,
-        images: blog.thumbnail ? [blog.thumbnail] : [],
+        images: blog.thumbnail?.url ? [blog.thumbnail.url] : [],
       },
     };
   } catch {

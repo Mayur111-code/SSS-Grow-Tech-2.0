@@ -4,7 +4,6 @@ import Technology from '../models/Technology.js';
 const options = {
   slugSource: 'name',
   searchFields: ['name', 'category'],
-  imageFields: ['icon'],
   publicFilter: { isActive: true },
 };
 

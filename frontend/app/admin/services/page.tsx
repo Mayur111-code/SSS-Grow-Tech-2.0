@@ -20,7 +20,7 @@ import { z } from "zod";
 import api, { getErrorMessage } from "@/lib/api";
 import { resolveImageUrl } from "@/lib/utils";
 import { useAdminList } from "@/services/queries";
-import type { Category, Service } from "@/types";
+import type { Category, Service, ImageRef } from "@/types";
 
 const serviceFormSchema = z.object({
   title: z.string().min(3, "Title is required"),
@@ -41,7 +41,7 @@ export default function AdminServicesPage() {
   } = useAdminResource<Service>("services");
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<ImageRef | null>(null);
   const { data: categoriesData } = useAdminList<Category>("categories");
 
   const categories = categoriesData?.items || [];
@@ -61,14 +61,14 @@ export default function AdminServicesPage() {
 
   const openCreate = () => {
     setEditing(null);
-    setImage("");
+    setImage(null);
     form.reset({ title: "", shortDescription: "", description: "", category: "", status: "active", featured: false, sortOrder: 0 });
     setFormOpen(true);
   };
 
   const openEdit = (item: Service) => {
     setEditing(item);
-    setImage(item.image || "");
+    setImage(item.image || null);
     setFormOpen(true);
   };
 
@@ -77,7 +77,7 @@ export default function AdminServicesPage() {
     try {
       const payload = {
         ...data,
-        image: image || "",
+        image,
         category: data.category || null,
       };
       if (editing) {
@@ -120,7 +120,7 @@ export default function AdminServicesPage() {
             header: "Service",
             cell: (s) => (
               <div className="flex items-center gap-3">
-                {s.image ? (
+                {s.image?.url ? (
                   <div className="flex h-10 w-14 items-center justify-center overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
                     <img src={resolveImageUrl(s.image)} alt={s.title} className="h-full w-full object-cover" />
                   </div>

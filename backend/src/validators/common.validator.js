@@ -9,6 +9,23 @@ const seoSchema = z
   .optional()
   .nullable();
 
+const imageObject = z.object({
+  url: z.string().max(1000).optional().nullable(),
+  publicId: z.string().max(500).optional().nullable(),
+});
+
+export const imageField = z
+  .union([imageObject, z.string().max(1000)])
+  .optional()
+  .nullable()
+  .transform((value) => {
+    if (value == null || value === '') return null;
+    if (typeof value === 'string') return { url: value, publicId: '' };
+    return { url: value.url || '', publicId: value.publicId || '' };
+  });
+
+export const imageFields = z.array(imageField).optional().nullable().default([]);
+
 export const idParamSchema = z.object({
   id: z.string().min(1, 'ID is required'),
 });

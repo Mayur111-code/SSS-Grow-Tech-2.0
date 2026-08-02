@@ -35,7 +35,7 @@ export function TestimonialsGrid() {
                     &ldquo;{testimonial.content}&rdquo;
                   </p>
                   <div className="mt-6 flex items-center gap-3 border-t border-slate-100 pt-5 dark:border-slate-800">
-                    {testimonial.avatar ? (
+                    {testimonial.avatar?.url ? (
                       <Image
                         src={resolveImageUrl(testimonial.avatar)}
                         alt={testimonial.name}

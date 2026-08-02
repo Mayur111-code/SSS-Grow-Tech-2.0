@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { imageRefField, imageRefSchema } from './imageRef.js';
 
 const projectSchema = new mongoose.Schema(
   {
@@ -51,11 +52,8 @@ const projectSchema = new mongoose.Schema(
       },
     ],
     features: [String],
-    gallery: [String],
-    cover: {
-      type: String,
-      default: '',
-    },
+    gallery: [imageRefSchema],
+    cover: imageRefField,
     liveUrl: {
       type: String,
       default: '',

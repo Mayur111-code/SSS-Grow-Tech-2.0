@@ -2,6 +2,28 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import SiteSetting from '../models/SiteSetting.js';
+import { cloudinaryService } from '../services/cloudinary.service.js';
+
+const IMAGE_SETTING_KEYS = new Set(['logo', 'favicon', 'heroImage']);
+
+const toImageRef = (value) => {
+  if (!value) return null;
+  if (typeof value === 'object') {
+    const url = value.url || '';
+    const publicId = value.publicId || '';
+    if (url && url.includes('cloudinary.com') && !publicId) {
+      return { url, publicId: cloudinaryService.extractPublicId(url) || '' };
+    }
+    return { url, publicId };
+  }
+  if (typeof value === 'string') {
+    if (value.includes('cloudinary.com')) {
+      return { url: value, publicId: cloudinaryService.extractPublicId(value) || '' };
+    }
+    return null;
+  }
+  return null;
+};
 
 const DEFAULT_SETTINGS = [
   { key: 'siteName', group: 'general', label: 'Site Name', value: 'SSS Grow Tech', type: 'text' },
@@ -41,6 +63,22 @@ export const getSettings = asyncHandler(async (req, res) => {
 export const updateSettings = asyncHandler(async (req, res) => {
   const { settings } = req.body;
   if (!Array.isArray(settings) || settings.length === 0) throw new ApiError(400, 'No settings provided');
+
+  const existingDocs = await SiteSetting.find({ key: { $in: settings.map((s) => s.key) } });
+  const docMap = {};
+  existingDocs.forEach((doc) => {
+    docMap[doc.key] = doc;
+  });
+
+  for (const s of settings) {
+    if (!IMAGE_SETTING_KEYS.has(s.key)) continue;
+    const oldDoc = docMap[s.key];
+    const oldRef = toImageRef(oldDoc ? oldDoc.value : null);
+    const newRef = toImageRef(s.value);
+    if (oldRef?.publicId && (!newRef || oldRef.publicId !== newRef.publicId)) {
+      await cloudinaryService.deleteImage(oldRef.publicId);
+    }
+  }
 
   const bulkOps = settings.map((s) => ({
     updateOne: {

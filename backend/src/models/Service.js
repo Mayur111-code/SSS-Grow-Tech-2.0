@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { imageRefField } from './imageRef.js';
 
 const serviceSchema = new mongoose.Schema(
   {
@@ -24,10 +25,7 @@ const serviceSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Description is required'],
     },
-    image: {
-      type: String,
-      default: '',
-    },
+    image: imageRefField,
     icon: {
       type: String,
       default: '',

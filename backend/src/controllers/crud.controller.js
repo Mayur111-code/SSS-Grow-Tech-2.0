@@ -49,21 +49,52 @@ export const createCrudController = (Model, options = {}) => {
     res.status(200).json(new ApiResponse(200, data, 'Resource retrieved successfully'));
   });
 
-  const reqUploaded = (url) => url && typeof url === 'string' && url.includes('cloudinary.com');
+  const toImageRef = (value) => {
+    if (!value) return null;
+    if (typeof value === 'object') {
+      const url = value.url || '';
+      const publicId = value.publicId || '';
+      if (url && url.includes('cloudinary.com') && !publicId) {
+        return { url, publicId: cloudinaryService.extractPublicId(url) || '' };
+      }
+      return { url, publicId };
+    }
+    if (typeof value === 'string') {
+      if (value.includes('cloudinary.com')) {
+        return { url: value, publicId: cloudinaryService.extractPublicId(value) || '' };
+      }
+      return value;
+    }
+    return null;
+  };
+
+  const hasImage = (ref) => Boolean(ref && typeof ref === 'object' && (ref.publicId || (ref.url && ref.url.includes('cloudinary.com'))));
 
   const create = asyncHandler(async (req, res) => {
     const body = { ...req.body };
-    const fileFields = Object.keys(req.files || {});
-    for (const field of fileFields) {
-      const files = Array.isArray(req.files[field]) ? req.files[field] : [req.files[field]];
-      if (files.length === 1) {
-        body[field] = files[0].path;
+    const files = req.files || {};
+    for (const field of imageFields) {
+      const uploaded = files[field];
+      if (uploaded && uploaded.length) {
+        const result = await cloudinaryService.uploadImage({ buffer: uploaded[0].buffer });
+        body[field] = { url: result.url, publicId: result.publicId };
+      } else {
+        body[field] = toImageRef(body[field]);
       }
     }
-    for (const field of imageFields) {
-      if (body[field] && typeof body[field] === 'string' && !body[field].includes('cloudinary.com') && body[field].startsWith('/')) {
-        const result = await cloudinaryService.uploadImage({ path: body[field] });
-        body[field] = result.url;
+    for (const field of manyImageFields) {
+      const uploaded = files[field];
+      if (uploaded && uploaded.length) {
+        const refs = [];
+        for (const file of uploaded) {
+          const result = await cloudinaryService.uploadImage({ buffer: file.buffer });
+          refs.push({ url: result.url, publicId: result.publicId });
+        }
+        body[field] = refs;
+      } else if (Array.isArray(body[field])) {
+        body[field] = body[field].map((item) => toImageRef(item)).filter(Boolean);
+      } else {
+        body[field] = [];
       }
     }
     if (slugSource && body[slugSource]) {
@@ -80,19 +111,27 @@ export const createCrudController = (Model, options = {}) => {
     if (!existing) throw new ApiError(404, 'Resource not found');
 
     const body = { ...req.body };
-    const fileFields = Object.keys(req.files || {});
-    for (const field of fileFields) {
-      const files = Array.isArray(req.files[field]) ? req.files[field] : [req.files[field]];
-      if (files.length === 1) {
-        if (files[0].path) {
-          body[field] = files[0].path;
-        }
+    const files = req.files || {};
+    for (const field of imageFields) {
+      const uploaded = files[field];
+      if (uploaded && uploaded.length) {
+        const result = await cloudinaryService.uploadImage({ buffer: uploaded[0].buffer });
+        body[field] = { url: result.url, publicId: result.publicId };
+      } else if (body[field] !== undefined) {
+        body[field] = toImageRef(body[field]);
       }
     }
-    for (const field of imageFields) {
-      if (body[field] && typeof body[field] === 'string' && !body[field].includes('cloudinary.com') && body[field].startsWith('/')) {
-        const result = await cloudinaryService.uploadImage({ path: body[field] });
-        body[field] = result.url;
+    for (const field of manyImageFields) {
+      const uploaded = files[field];
+      if (uploaded && uploaded.length) {
+        const refs = [];
+        for (const file of uploaded) {
+          const result = await cloudinaryService.uploadImage({ buffer: file.buffer });
+          refs.push({ url: result.url, publicId: result.publicId });
+        }
+        body[field] = refs;
+      } else if (Array.isArray(body[field])) {
+        body[field] = body[field].map((item) => toImageRef(item)).filter(Boolean);
       }
     }
     if (body.featured !== undefined) body.featured = parseBoolean(body.featured);
@@ -104,8 +143,21 @@ export const createCrudController = (Model, options = {}) => {
 
     const oldDoc = existing.toObject ? existing.toObject() : existing;
     for (const field of imageFields) {
-      if (body[field] && oldDoc[field] && body[field] !== oldDoc[field] && reqUploaded(oldDoc[field])) {
-        await cloudinaryService.deleteFile(oldDoc[field]);
+      const oldRef = toImageRef(oldDoc[field]);
+      const newRef = body[field] !== undefined ? toImageRef(body[field]) : oldRef;
+      if (hasImage(oldRef) && (!hasImage(newRef) || oldRef.publicId !== newRef.publicId)) {
+        await cloudinaryService.deleteImage(oldRef.publicId);
+      }
+    }
+    for (const field of manyImageFields) {
+      if (body[field] === undefined) continue;
+      const oldList = (oldDoc[field] || []).map((item) => toImageRef(item)).filter(hasImage);
+      const newList = (Array.isArray(body[field]) ? body[field] : []).map((item) => toImageRef(item)).filter(hasImage);
+      const newIds = new Set(newList.map((item) => item.publicId).filter(Boolean));
+      for (const oldItem of oldList) {
+        if (oldItem.publicId && !newIds.has(oldItem.publicId)) {
+          await cloudinaryService.deleteImage(oldItem.publicId);
+        }
       }
     }
     const doc = await Model.findByIdAndUpdate(id, body, { new: true, runValidators: true });
@@ -116,14 +168,16 @@ export const createCrudController = (Model, options = {}) => {
     const { id } = req.params;
     const doc = await Model.findById(id);
     if (!doc) throw new ApiError(404, 'Resource not found');
-    if (reqUploaded(doc.cover)) await cloudinaryService.deleteFile(doc.cover);
-    if (reqUploaded(doc.image)) await cloudinaryService.deleteFile(doc.image);
-    if (reqUploaded(doc.thumbnail)) await cloudinaryService.deleteFile(doc.thumbnail);
-    if (reqUploaded(doc.banner)) await cloudinaryService.deleteFile(doc.banner);
-    if (reqUploaded(doc.icon)) await cloudinaryService.deleteFile(doc.icon);
-    if (reqUploaded(doc.avatar)) await cloudinaryService.deleteFile(doc.avatar);
-    if (Array.isArray(doc.gallery) && doc.gallery.length) {
-      await cloudinaryService.deleteMany(doc.gallery.filter((g) => g && typeof g === 'string' && g.includes('cloudinary.com')));
+    const obj = doc.toObject ? doc.toObject() : doc;
+    for (const field of imageFields) {
+      const ref = toImageRef(obj[field]);
+      if (hasImage(ref)) await cloudinaryService.deleteImage(ref.publicId);
+    }
+    for (const field of manyImageFields) {
+      for (const item of obj[field] || []) {
+        const ref = toImageRef(item);
+        if (hasImage(ref)) await cloudinaryService.deleteImage(ref.publicId);
+      }
     }
     await Model.findByIdAndDelete(id);
     res.status(200).json(new ApiResponse(200, null, 'Resource deleted successfully'));
@@ -146,14 +200,16 @@ export const createCrudController = (Model, options = {}) => {
     const { ids } = req.body;
     const docs = await Model.find({ _id: { $in: ids } });
     for (const doc of docs) {
-      if (reqUploaded(doc.cover)) await cloudinaryService.deleteFile(doc.cover);
-      if (reqUploaded(doc.image)) await cloudinaryService.deleteFile(doc.image);
-      if (reqUploaded(doc.thumbnail)) await cloudinaryService.deleteFile(doc.thumbnail);
-      if (reqUploaded(doc.banner)) await cloudinaryService.deleteFile(doc.banner);
-      if (reqUploaded(doc.icon)) await cloudinaryService.deleteFile(doc.icon);
-      if (reqUploaded(doc.avatar)) await cloudinaryService.deleteFile(doc.avatar);
-      if (Array.isArray(doc.gallery) && doc.gallery.length) {
-        await cloudinaryService.deleteMany(doc.gallery.filter((g) => g && typeof g === 'string' && g.includes('cloudinary.com')));
+      const obj = doc.toObject ? doc.toObject() : doc;
+      for (const field of imageFields) {
+        const ref = toImageRef(obj[field]);
+        if (hasImage(ref)) await cloudinaryService.deleteImage(ref.publicId);
+      }
+      for (const field of manyImageFields) {
+        for (const item of obj[field] || []) {
+          const ref = toImageRef(item);
+          if (hasImage(ref)) await cloudinaryService.deleteImage(ref.publicId);
+        }
       }
     }
     await Model.deleteMany({ _id: { $in: ids } });

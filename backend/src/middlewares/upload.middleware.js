@@ -1,40 +1,29 @@
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
 import { ApiError } from '../utils/ApiError.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const uploadDir = path.resolve(__dirname, '../../uploads');
-
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const ext = path.extname(file.originalname);
-    cb(null, `${unique}${ext}`);
-  },
-});
+const ALLOWED_IMAGE_MIMES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/svg+xml'];
+const ALLOWED_IMAGE_EXTS = /png|jpe?g|webp|svg/;
+const ALLOWED_DOC_MIMES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+const ALLOWED_DOC_EXTS = /pdf|docx?/;
 
 const fileFilter = (req, file, cb) => {
-  const allowedImages = /png|jpg|jpeg|webp|svg|gif/;
-  const allowedDocs = /pdf|doc|docx/;
-  const isImage = allowedImages.test(file.mimetype) || allowedImages.test(path.extname(file.originalname).toLowerCase());
-  const isDoc = allowedDocs.test(file.mimetype) || allowedDocs.test(path.extname(file.originalname).toLowerCase());
-  const isAllowed = isImage || isDoc;
-  if (!isAllowed) {
-    return cb(new ApiError(400, 'File type not supported. Upload an image (png, jpg, jpeg, webp, svg) or document (pdf, doc, docx).'), false);
+  const ext = (path.extname(file.originalname) || '').toLowerCase();
+  const isImage = ALLOWED_IMAGE_MIMES.includes(file.mimetype) || ALLOWED_IMAGE_EXTS.test(ext);
+  const isDoc = ALLOWED_DOC_MIMES.includes(file.mimetype) || ALLOWED_DOC_EXTS.test(ext);
+  if (isImage) {
+    file.mediaType = 'image';
+    return cb(null, true);
   }
-  cb(null, true);
+  if (isDoc) {
+    file.mediaType = 'document';
+    return cb(null, true);
+  }
+  return cb(new ApiError(400, 'File type not supported. Upload an image (png, jpg, jpeg, webp, svg) or document (pdf, doc, docx).'), false);
 };
 
 export const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter,
   limits: { fileSize: 10 * 1024 * 1024 },
 });

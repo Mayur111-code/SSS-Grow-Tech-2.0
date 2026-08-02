@@ -18,8 +18,8 @@ export const applyToJob = asyncHandler(async (req, res) => {
 
   let resume = req.body.resumeUrl || '';
   let resumePublicId = req.body.resumePublicId || '';
-  if (req.file?.path) {
-    const result = await cloudinaryService.uploadResume({ path: req.file.path });
+  if (req.file?.buffer) {
+    const result = await cloudinaryService.uploadResume({ buffer: req.file.buffer });
     resume = result.url;
     resumePublicId = result.publicId;
   }

@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { seoSchema } from './common.validator.js';
+import { seoSchema, imageField } from './common.validator.js';
 
 const createServiceSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(120),
   shortDescription: z.string().min(10, 'Short description must be at least 10 characters').max(300),
   description: z.string().min(10, 'Description must be at least 10 characters'),
-  image: z.string().max(500).optional().nullable().default(''),
+  image: imageField,
   icon: z.string().max(500).optional().nullable().default(''),
   category: z.string().min(1).optional().nullable().default(null),
   features: z.array(z.string()).optional().nullable().default([]),

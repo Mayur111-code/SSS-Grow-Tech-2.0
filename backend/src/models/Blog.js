@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { imageRefField } from './imageRef.js';
 
 const blogSchema = new mongoose.Schema(
   {
@@ -24,14 +25,8 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Content is required'],
     },
-    thumbnail: {
-      type: String,
-      default: '',
-    },
-    banner: {
-      type: String,
-      default: '',
-    },
+    thumbnail: imageRefField,
+    banner: imageRefField,
     author: {
       type: String,
       default: 'SSS Grow Tech',

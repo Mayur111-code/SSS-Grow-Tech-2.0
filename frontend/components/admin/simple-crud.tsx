@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import api, { getErrorMessage } from "@/lib/api";
 import { resolveImageUrl } from "@/lib/utils";
 import type { Column } from "@/components/ui/data-table";
+import type { ImageRef } from "@/types";
 
 type FieldType = "text" | "textarea" | "number" | "checkbox" | "select" | "image";
 
@@ -61,7 +62,7 @@ export function SimpleCrud<T extends { _id: string }>({
   } = useAdminResource<T>(resource);
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<ImageRef | null>(null);
 
   const initialValues = () => {
     const values: Record<string, unknown> = { ...defaults };
@@ -76,7 +77,8 @@ export function SimpleCrud<T extends { _id: string }>({
       });
       const imgField = fields.find((f) => f.type === "image");
       if (imgField) {
-        setImage(((editing as unknown as Record<string, unknown>)[imgField.name] as string) || "");
+        const raw = (editing as unknown as Record<string, unknown>)[imgField.name];
+        setImage((raw as ImageRef | null) || null);
       }
     }
     return values;
@@ -86,7 +88,7 @@ export function SimpleCrud<T extends { _id: string }>({
 
   const openCreate = () => {
     setEditing(null);
-    setImage("");
+    setImage(null);
     form.reset(initialValues());
     setFormOpen(true);
   };
@@ -124,7 +126,7 @@ export function SimpleCrud<T extends { _id: string }>({
     }
   };
 
-  const currentImageValue = image || (editing as unknown as Record<string, unknown> | null)?.[fields.find((f) => f.type === "image")?.name || ""] as string | undefined;
+  const currentImageValue = (image || ((editing as unknown as Record<string, unknown> | null)?.[fields.find((f) => f.type === "image")?.name || ""] as ImageRef | string | undefined));
 
   return (
     <div className="space-y-6">
@@ -178,10 +180,10 @@ export function SimpleCrud<T extends { _id: string }>({
                       const formData = new FormData();
                       formData.append("image", file);
                       try {
-                        const res = await api.post<{ data: { url: string } }>("/upload/image", formData, {
+                        const res = await api.post<{ data: { url: string; publicId: string } }>("/upload/image", formData, {
                           headers: { "Content-Type": "multipart/form-data" },
                         });
-                        setImage(res.data.data.url);
+                        setImage({ url: res.data.data.url, publicId: res.data.data.publicId });
                         success("Image uploaded");
                       } catch (err) {
                         error(getErrorMessage(err));

@@ -4,7 +4,6 @@ import Category from '../models/Category.js';
 const options = {
   slugSource: 'name',
   searchFields: ['name', 'description', 'type'],
-  imageFields: ['icon'],
   publicFilter: { isActive: true },
 };
 
