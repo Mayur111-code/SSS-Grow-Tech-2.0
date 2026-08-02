@@ -56,15 +56,15 @@ export default function MyApplicationsPage() {
                 className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-[#0f101a]"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500/10">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-500/10">
                       <Briefcase className="h-5 w-5 text-brand-500" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900 dark:text-white">
+                    <div className="min-w-0">
+                      <h3 className="truncate font-semibold text-slate-900 dark:text-white">
                         {career?.title || "Job application"}
                       </h3>
-                      <p className="text-xs text-slate-400">
+                      <p className="truncate text-xs text-slate-400">
                         {career?.department ? `${career.department} · ` : ""}
                         Applied {formatDate(item.createdAt)}
                       </p>
@@ -74,7 +74,7 @@ export default function MyApplicationsPage() {
                 </div>
 
                 {item.coverLetter && (
-                  <p className="mt-3 line-clamp-3 text-sm text-slate-600 dark:text-slate-300">{item.coverLetter}</p>
+                  <p className="mt-3 line-clamp-3 break-words text-sm text-slate-600 dark:text-slate-300">{item.coverLetter}</p>
                 )}
 
                 <div className="mt-3 flex flex-wrap items-center gap-2">

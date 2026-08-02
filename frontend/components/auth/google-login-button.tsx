@@ -28,6 +28,8 @@ export function GoogleLoginButton({ onSuccess, disabled }: GoogleLoginButtonProp
   const { error } = useToast();
   const [clientId] = useState(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "");
   const [loaded, setLoaded] = useState(false);
+  const [width, setWidth] = useState(320);
+  const renderedWidth = useRef(0);
 
   useEffect(() => {
     if (!clientId) return;
@@ -43,14 +45,6 @@ export function GoogleLoginButton({ onSuccess, disabled }: GoogleLoginButtonProp
         },
       });
       setLoaded(true);
-      if (buttonRef.current) {
-        window.google.accounts.id.renderButton(buttonRef.current, {
-          theme: "outline",
-          size: "large",
-          width: 320,
-          text: "continue_with",
-        });
-      }
     };
     document.head.appendChild(script);
     return () => {
@@ -58,6 +52,31 @@ export function GoogleLoginButton({ onSuccess, disabled }: GoogleLoginButtonProp
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientId]);
+
+  useEffect(() => {
+    const el = buttonRef.current;
+    const parent = el?.parentElement;
+    if (!parent) return;
+    const update = () => setWidth(parent.clientWidth || 320);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(parent);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!clientId || !loaded || !window.google || !buttonRef.current) return;
+    const w = Math.max(200, Math.min(width, 320));
+    if (renderedWidth.current === w) return;
+    renderedWidth.current = w;
+    window.google.accounts.id.renderButton(buttonRef.current, {
+      theme: "outline",
+      size: "large",
+      width: w,
+      text: "continue_with",
+      shape: "pill",
+    });
+  }, [clientId, loaded, width]);
 
   if (!clientId) {
     return (
@@ -91,8 +110,8 @@ export function GoogleLoginButton({ onSuccess, disabled }: GoogleLoginButtonProp
   }
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div ref={buttonRef} className={loaded ? "block" : "hidden"} />
+    <div className="flex w-full flex-col items-center gap-2">
+      <div ref={buttonRef} className={loaded ? "block w-full" : "hidden"} />
       {!loaded && (
         <Button type="button" variant="outline" className="w-full" disabled={disabled}>
           Loading Google login...

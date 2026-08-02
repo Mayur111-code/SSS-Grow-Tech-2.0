@@ -73,6 +73,7 @@ export default function ForgotPasswordPage() {
           placeholder="you@company.com"
           autoComplete="email"
           error={errors.email?.message}
+          className="h-11"
           {...register("email")}
         />
         <Button type="submit" size="lg" className="w-full" loading={isSubmitting}>

@@ -37,7 +37,7 @@ function FaqItem({ faq }: { faq: FAQ }) {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <p className="border-t border-slate-100 p-5 leading-relaxed text-slate-600 dark:border-slate-800 dark:text-slate-300">
+            <p className="break-words border-t border-slate-100 p-5 leading-relaxed text-slate-600 dark:border-slate-800 dark:text-slate-300">
               {faq.answer}
             </p>
           </motion.div>

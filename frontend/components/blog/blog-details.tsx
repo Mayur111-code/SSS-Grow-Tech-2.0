@@ -87,7 +87,7 @@ export function BlogDetails({ slug }: { slug: string }) {
 
           <Reveal className="mt-10">
             <article
-              className="prose prose-lg prose-slate max-w-none dark:prose-invert"
+              className="prose prose-lg prose-slate max-w-none break-words dark:prose-invert"
               dangerouslySetInnerHTML={{ __html: blog.content }}
             />
           </Reveal>
@@ -106,7 +106,7 @@ export function BlogDetails({ slug }: { slug: string }) {
           {related && related.items && related.items.length > 0 && (
             <div className="mt-16">
               <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Related articles</h2>
-              <div className="mt-6 grid gap-6 sm:grid-cols-3">
+              <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 {related.items.map((item) => (
                   <Link key={item._id} href={`/blog/${item.slug}`} className="group block">
                     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0f101a]">

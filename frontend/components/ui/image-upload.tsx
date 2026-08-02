@@ -171,7 +171,7 @@ export function ResumeUpload({ value, onChange, label, className }: ResumeUpload
   return (
     <div className={cn("space-y-2", className)}>
       {label && <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{label}</p>}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
           onClick={() => inputRef.current?.click()}

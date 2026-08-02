@@ -82,7 +82,7 @@ export function BlogGrid() {
         ) : blogs.length === 0 ? (
           <div className="py-20 text-center text-slate-500">No articles found matching your search.</div>
         ) : (
-          <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
+          <StaggerContainer className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
             {blogs.map((blog: Blog) => (
               <StaggerItem key={blog._id}>
                 <Link href={`/blog/${blog.slug}`} className="group block h-full">
@@ -106,7 +106,7 @@ export function BlogGrid() {
                       )}
                     </div>
                     <div className="p-6">
-                      <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500 dark:text-slate-400">
                         <span className="inline-flex items-center gap-1">
                           <CalendarDays className="h-3.5 w-3.5" /> {formatDate(blog.publishDate)}
                         </span>

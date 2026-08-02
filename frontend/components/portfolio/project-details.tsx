@@ -140,7 +140,7 @@ export function ProjectDetails({ slug }: { slug: string }) {
               {project.features?.length > 0 && (
                 <Reveal className="mt-10">
                   <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Key features</h2>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {project.features.map((feature) => (
                       <div
                         key={feature}
@@ -157,7 +157,7 @@ export function ProjectDetails({ slug }: { slug: string }) {
               {project.gallery?.length > 0 && (
                 <Reveal className="mt-10">
                   <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Gallery</h2>
-                  <div className="mt-5 grid grid-cols-2 gap-4">
+                  <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
                     {project.gallery.map((img, i) => (
                       <div key={i} className="relative aspect-video overflow-hidden rounded-xl">
                         <Image

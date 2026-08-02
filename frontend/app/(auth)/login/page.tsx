@@ -84,6 +84,7 @@ function LoginContent() {
           placeholder="you@company.com"
           autoComplete="email"
           error={errors.email?.message}
+          className="h-11"
           {...register("email")}
         />
         <div className="relative">
@@ -93,14 +94,16 @@ function LoginContent() {
             placeholder="••••••••"
             autoComplete="current-password"
             error={errors.password?.message}
+            className="h-11 pr-[3.25rem]"
             {...register("password")}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-[38px] text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-200"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute right-1.5 top-6 flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-200"
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
         <div className="flex items-center justify-between text-sm">

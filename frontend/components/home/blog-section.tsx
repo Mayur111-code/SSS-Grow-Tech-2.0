@@ -37,7 +37,7 @@ export function BlogSection() {
         {isLoading ? (
           <CardSkeleton className="mt-12" count={3} />
         ) : (
-          <StaggerContainer className="mt-12 grid gap-6 md:grid-cols-3" stagger={0.1}>
+          <StaggerContainer className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3" stagger={0.1}>
             {(data?.items || []).map((blog: Blog) => (
               <StaggerItem key={blog._id}>
                 <Link href={`/blog/${blog.slug}`} className="group block h-full">
@@ -53,7 +53,7 @@ export function BlogSection() {
                       />
                     </div>
                     <div className="p-6">
-                      <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500 dark:text-slate-400">
                         <span className="inline-flex items-center gap-1">
                           <CalendarDays className="h-3.5 w-3.5" /> {formatDate(blog.publishDate)}
                         </span>

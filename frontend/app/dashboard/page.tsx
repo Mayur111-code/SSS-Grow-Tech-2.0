@@ -131,15 +131,15 @@ export default function DashboardPage() {
           <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-[#0f101a]">
             <h3 className="font-display text-lg font-semibold text-slate-900 dark:text-white">Account</h3>
             <dl className="mt-4 space-y-3 text-sm">
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-start justify-between gap-2">
                 <dt className="text-slate-500 dark:text-slate-400">Email</dt>
-                <dd className="font-medium text-slate-900 dark:text-white">{user?.email}</dd>
+                <dd className="min-w-0 break-all font-medium text-slate-900 dark:text-white">{user?.email}</dd>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-start justify-between gap-2">
                 <dt className="text-slate-500 dark:text-slate-400">Role</dt>
                 <dd className="font-medium capitalize text-brand-600 dark:text-brand-400">{user?.role}</dd>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-start justify-between gap-2">
                 <dt className="text-slate-500 dark:text-slate-400">Member since</dt>
                 <dd className="font-medium text-slate-900 dark:text-white">
                   {new Date(user?.createdAt || "").toLocaleDateString()}
@@ -169,16 +169,19 @@ export default function DashboardPage() {
               <Input
                 label="Full name"
                 error={profileForm.formState.errors.name?.message}
+                className="h-11"
                 {...profileForm.register("name")}
               />
               <Input
                 label="Phone"
                 placeholder="+1 555 000 0000"
+                className="h-11"
                 {...profileForm.register("phone")}
               />
               <Input
                 label="Company"
                 placeholder="Your company"
+                className="h-11"
                 {...profileForm.register("company")}
               />
             </div>
@@ -210,6 +213,7 @@ export default function DashboardPage() {
                 label="Current password"
                 type="password"
                 error={passwordForm.formState.errors.currentPassword?.message}
+                className="h-11"
                 {...passwordForm.register("currentPassword")}
               />
               <div className="grid gap-5 sm:grid-cols-2">
@@ -217,12 +221,14 @@ export default function DashboardPage() {
                   label="New password"
                   type="password"
                   error={passwordForm.formState.errors.newPassword?.message}
+                  className="h-11"
                   {...passwordForm.register("newPassword")}
                 />
                 <Input
                   label="Confirm new password"
                   type="password"
                   error={passwordForm.formState.errors.confirmPassword?.message}
+                  className="h-11"
                   {...passwordForm.register("confirmPassword")}
                 />
               </div>

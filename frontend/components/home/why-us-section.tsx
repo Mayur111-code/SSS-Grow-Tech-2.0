@@ -58,7 +58,7 @@ export function WhyUsSection() {
             </div>
           </Reveal>
 
-          <StaggerContainer className="grid gap-5 sm:grid-cols-2" stagger={0.1}>
+          <StaggerContainer className="grid grid-cols-1 gap-5 sm:grid-cols-2" stagger={0.1}>
             {values.map((value) => (
               <StaggerItem key={value.title}>
                 <TiltCard className="h-full" intensity={8}>

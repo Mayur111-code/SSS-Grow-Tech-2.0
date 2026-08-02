@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-mesh px-4 py-12">
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-mesh px-4 py-6 sm:py-12">
       <div className="absolute inset-0 bg-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)]" />
       <div className="pointer-events-none absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-brand-600/20 blur-[120px] animate-aurora" />
       <div className="pointer-events-none absolute -bottom-40 right-1/4 h-96 w-96 rounded-full bg-accent-600/20 blur-[120px] animate-aurora" />
@@ -27,7 +27,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="mb-8 flex justify-center">
           <Logo size="lg" glow />
         </div>
-        <div className="gradient-border relative rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-card backdrop-blur-xl sm:p-10 dark:border-slate-800 dark:bg-[#0f101a]/80">
+        <div className="gradient-border relative max-w-full rounded-3xl border border-slate-200 bg-white/80 p-4 shadow-card backdrop-blur-xl sm:p-8 dark:border-slate-800 dark:bg-[#0f101a]/80">
           {children}
         </div>
         <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500">

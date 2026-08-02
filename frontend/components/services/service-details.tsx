@@ -61,7 +61,7 @@ export function ServiceDetails({ slug }: { slug: string }) {
               <Reveal>
                 <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Overview</h2>
                 <div
-                  className="prose prose-slate mt-4 max-w-none leading-relaxed text-slate-600 dark:prose-invert dark:text-slate-300"
+                  className="prose prose-slate mt-4 max-w-none break-words leading-relaxed text-slate-600 dark:prose-invert dark:text-slate-300"
                   dangerouslySetInnerHTML={{ __html: service.description }}
                 />
               </Reveal>
@@ -69,7 +69,7 @@ export function ServiceDetails({ slug }: { slug: string }) {
               {service.features?.length > 0 && (
                 <Reveal className="mt-10">
                   <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">What&apos;s included</h2>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {service.features.map((feature) => (
                       <div
                         key={feature}

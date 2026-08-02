@@ -47,7 +47,7 @@ export function ServicesSection() {
         {isLoading ? (
           <CardSkeleton className="mt-14" />
         ) : (
-          <StaggerContainer className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
+          <StaggerContainer className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
             {(data?.items || []).map((service: Service, index: number) => {
               const Icon = iconFor(index);
               return (

@@ -136,7 +136,7 @@ export default function AdminUsersPage() {
           <Input label="Email" type="email" error={form.formState.errors.email?.message} {...form.register("email")} />
           <Input label="Phone" {...form.register("phone")} />
           <Input label="Company" {...form.register("company")} />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block space-y-1.5">
               <span className="block text-sm font-medium text-slate-700 dark:text-slate-200">Role</span>
               <select className="w-full rounded-xl border border-slate-300 bg-transparent px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700" {...form.register("role")}>

@@ -144,7 +144,7 @@ export function CareerDetails({ slug }: { slug: string }) {
             <Reveal>
               <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">About the role</h2>
               <div
-                className="prose prose-slate mt-4 max-w-none leading-relaxed text-slate-600 dark:prose-invert dark:text-slate-300"
+                className="prose prose-slate mt-4 max-w-none break-words leading-relaxed text-slate-600 dark:prose-invert dark:text-slate-300"
                 dangerouslySetInnerHTML={{ __html: job.description }}
               />
             </Reveal>
@@ -212,12 +212,13 @@ export function CareerDetails({ slug }: { slug: string }) {
                 )}
                 {isAuthenticated && (
                   <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-4">
-                    <Input label="Full name" placeholder="Jane Doe" error={errors.name?.message} {...register("name")} />
-                    <Input label="Email" type="email" placeholder="jane@company.com" error={errors.email?.message} {...register("email")} />
-                    <Input label="Phone (optional)" placeholder="+1 555 000 0000" {...register("phone")} />
+                    <Input label="Full name" placeholder="Jane Doe" className="h-11" error={errors.name?.message} {...register("name")} />
+                    <Input label="Email" type="email" placeholder="jane@company.com" className="h-11" error={errors.email?.message} {...register("email")} />
+                    <Input label="Phone (optional)" placeholder="+1 555 000 0000" className="h-11" {...register("phone")} />
                     <Input
                       label="Portfolio / LinkedIn (optional)"
                       placeholder="https://..."
+                      className="h-11"
                       error={errors.portfolioUrl?.message}
                       {...register("portfolioUrl")}
                     />
@@ -230,6 +231,7 @@ export function CareerDetails({ slug }: { slug: string }) {
                     />
                     <ResumeUpload
                       label="Resume (PDF, DOC, DOCX)"
+                      className="w-full"
                       value={resumeUrl}
                       onChange={(url, publicId) => {
                         setResumeUrl(url);

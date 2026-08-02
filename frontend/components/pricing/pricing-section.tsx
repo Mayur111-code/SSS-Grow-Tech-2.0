@@ -64,13 +64,13 @@ export function PricingSection() {
   return (
     <section className="py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <StaggerContainer className="grid gap-6 lg:grid-cols-3" stagger={0.12}>
+        <StaggerContainer className="grid grid-cols-1 gap-6 lg:grid-cols-3" stagger={0.12}>
           {plans.map((plan) => (
             <StaggerItem key={plan.name}>
               <motion.div
                 whileHover={{ y: -8 }}
                 className={cn(
-                  "relative h-full rounded-3xl border p-8 transition-shadow",
+                  "relative flex h-full flex-col rounded-3xl border p-8 transition-shadow",
                   plan.popular
                     ? "border-brand-500/60 bg-gradient-to-b from-brand-600/10 to-transparent shadow-[0_20px_60px_-20px_rgba(99,102,241,0.5)] dark:border-brand-500/40"
                     : "border-slate-200 bg-white hover:shadow-card dark:border-slate-800 dark:bg-[#0f101a]"
@@ -87,7 +87,7 @@ export function PricingSection() {
                   <span className="font-display text-4xl font-bold text-slate-900 dark:text-white">{plan.price}</span>
                   <span className="text-sm text-slate-400">/ {plan.period}</span>
                 </div>
-                <ul className="mt-6 space-y-3">
+                <ul className="mt-6 flex-1 space-y-3">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-300">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" />

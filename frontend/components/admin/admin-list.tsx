@@ -127,7 +127,7 @@ export function AdminList<T>({
             className="pl-10"
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {selected.length > 0 && (
             <>
               <Button variant="danger" size="sm" onClick={() => setBulkOpen(true)}>

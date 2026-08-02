@@ -26,7 +26,7 @@ export function TestimonialsSection() {
         {isLoading ? (
           <CardSkeleton className="mt-12" count={3} />
         ) : (
-          <StaggerContainer className="mt-12 grid gap-6 md:grid-cols-3" stagger={0.1}>
+          <StaggerContainer className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3" stagger={0.1}>
             {(data?.items || []).slice(0, 3).map((testimonial: Testimonial) => (
               <StaggerItem key={testimonial._id}>
                 <TiltCard className="h-full" intensity={8}>
@@ -41,7 +41,7 @@ export function TestimonialsSection() {
                           <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                         ))}
                       </div>
-                      <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                      <p className="mt-4 break-words text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                         &ldquo;{testimonial.content}&rdquo;
                       </p>
                       <div className="mt-6 flex items-center gap-3 border-t border-slate-100 pt-5 dark:border-slate-800">

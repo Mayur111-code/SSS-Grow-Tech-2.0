@@ -49,7 +49,7 @@ export function ProcessSection() {
           </h2>
         </Reveal>
 
-        <StaggerContainer className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5" stagger={0.12}>
+        <StaggerContainer className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5" stagger={0.12}>
           {steps.map((step) => (
             <StaggerItem key={step.step}>
               <TiltCard className="h-full" intensity={10}>

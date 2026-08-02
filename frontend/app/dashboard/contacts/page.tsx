@@ -47,24 +47,24 @@ export default function MyContactsPage() {
               className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-[#0f101a]"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500/10">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-500/10">
                     <MessageSquareText className="h-5 w-5 text-brand-500" />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-slate-900 dark:text-white">{item.subject}</h3>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="truncate font-semibold text-slate-900 dark:text-white">{item.subject}</h3>
                       <Badge variant={statusVariant(item.status)}>{item.status}</Badge>
                     </div>
                     <p className="text-xs text-slate-400">{formatDateTime(item.createdAt)}</p>
                   </div>
                 </div>
               </div>
-              <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">{item.message}</p>
+              <p className="mt-3 break-words text-sm text-slate-600 dark:text-slate-300">{item.message}</p>
               {item.reply && (
                 <div className="mt-3 rounded-xl bg-brand-500/5 p-4 text-sm">
                   <p className="font-semibold text-brand-600 dark:text-brand-400">Response from SSS Grow</p>
-                  <p className="mt-1 text-slate-700 dark:text-slate-300">{item.reply}</p>
+                  <p className="mt-1 break-words text-slate-700 dark:text-slate-300">{item.reply}</p>
                   {item.repliedAt && <p className="mt-1 text-xs text-slate-400">{formatDateTime(item.repliedAt)}</p>}
                 </div>
               )}

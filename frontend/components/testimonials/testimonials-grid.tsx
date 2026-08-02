@@ -18,7 +18,7 @@ export function TestimonialsGrid() {
         {isLoading ? (
           <CardSkeleton count={6} />
         ) : (
-          <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
+          <StaggerContainer className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
             {(data?.items || []).map((testimonial: Testimonial) => (
               <StaggerItem key={testimonial._id}>
                 <motion.div
@@ -31,7 +31,7 @@ export function TestimonialsGrid() {
                       <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="mt-4 leading-relaxed text-slate-600 dark:text-slate-300">
+                  <p className="mt-4 break-words leading-relaxed text-slate-600 dark:text-slate-300">
                     &ldquo;{testimonial.content}&rdquo;
                   </p>
                   <div className="mt-6 flex items-center gap-3 border-t border-slate-100 pt-5 dark:border-slate-800">

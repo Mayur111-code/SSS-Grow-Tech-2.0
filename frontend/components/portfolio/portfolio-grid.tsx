@@ -60,7 +60,7 @@ export function PortfolioGrid() {
         ) : projects.length === 0 ? (
           <div className="py-20 text-center text-slate-500">No projects found in this category.</div>
         ) : (
-          <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
+          <StaggerContainer className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
             {projects.map((project: Project) => (
               <StaggerItem key={project._id}>
                 <Link href={`/portfolio/${project.slug}`} className="group block h-full">

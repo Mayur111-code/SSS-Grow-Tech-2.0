@@ -39,7 +39,7 @@ export function PortfolioSection() {
         {isLoading ? (
           <CardSkeleton className="mt-12" count={3} />
         ) : (
-          <StaggerContainer className="mt-12 grid gap-6 md:grid-cols-3" stagger={0.12}>
+          <StaggerContainer className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3" stagger={0.12}>
             {(data?.items || []).map((project: Project) => (
               <StaggerItem key={project._id}>
                 <Link href={`/portfolio/${project.slug}`} className="group block h-full">

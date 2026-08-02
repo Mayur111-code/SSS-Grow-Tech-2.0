@@ -46,7 +46,7 @@ export function ServicesGrid() {
           {isLoading ? (
             <CardSkeleton count={6} />
           ) : (
-            <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
+            <StaggerContainer className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
               {services.map((service: Service, index: number) => (
                 <StaggerItem key={service._id}>
                   <Link href={`/services/${service.slug}`} className="group block h-full">

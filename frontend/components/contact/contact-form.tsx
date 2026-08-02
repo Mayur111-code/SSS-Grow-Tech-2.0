@@ -93,14 +93,14 @@ export function ContactForm() {
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-500/10 text-brand-500">
                       <info.icon className="h-5 w-5" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{info.label}</p>
                       {info.href ? (
-                        <a href={info.href} className="mt-0.5 block font-medium text-slate-900 transition hover:text-brand-600 dark:text-white">
+                        <a href={info.href} className="mt-0.5 block break-words font-medium text-slate-900 transition hover:text-brand-600 dark:text-white">
                           {info.value}
                         </a>
                       ) : (
-                        <p className="mt-0.5 font-medium text-slate-900 dark:text-white">{info.value}</p>
+                        <p className="mt-0.5 break-words font-medium text-slate-900 dark:text-white">{info.value}</p>
                       )}
                     </div>
                   </div>
@@ -155,14 +155,15 @@ export function ContactForm() {
                   </div>
                   <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5">
                     <div className="grid gap-5 sm:grid-cols-2">
-                      <Input label="Full name" placeholder="Jane Doe" error={errors.name?.message} {...register("name")} />
-                      <Input label="Email" type="email" placeholder="jane@company.com" error={errors.email?.message} {...register("email")} />
+                      <Input label="Full name" placeholder="Jane Doe" className="h-11" error={errors.name?.message} {...register("name")} />
+                      <Input label="Email" type="email" placeholder="jane@company.com" className="h-11" error={errors.email?.message} {...register("email")} />
                     </div>
                     <div className="grid gap-5 sm:grid-cols-2">
-                      <Input label="Phone (optional)" placeholder="+91 70000 00000" {...register("phone")} />
+                      <Input label="Phone (optional)" placeholder="+91 70000 00000" className="h-11" {...register("phone")} />
                       <Select
                         label="Inquiry type"
                         error={errors.type?.message}
+                        className="h-11"
                         {...register("type")}
                         options={[
                           { value: "contact", label: "General inquiry" },
@@ -173,6 +174,7 @@ export function ContactForm() {
                     <Input
                       label="Subject"
                       placeholder="What is this regarding?"
+                      className="h-11"
                       error={errors.subject?.message}
                       {...register("subject")}
                     />

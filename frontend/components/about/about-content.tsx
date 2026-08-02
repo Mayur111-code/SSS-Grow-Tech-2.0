@@ -59,7 +59,7 @@ export function AboutContent() {
               <div className="relative">
                 <div className="overflow-hidden rounded-3xl">
                   <Image
-                    src="/sssgrow.jpg"
+                    src="/aboutimg.jpg"
                     alt="SSS Grow Tech Team"
                     width={640}
                     height={480}
@@ -104,7 +104,7 @@ export function AboutContent() {
                 </p>
               </Reveal>
 
-              <div className="mt-8 grid gap-5 sm:grid-cols-2">
+              <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <Reveal delay={0.15}>
                   <div className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-[#0f101a]">
                     <Target className="h-6 w-6 shrink-0 text-brand-500" />
@@ -152,7 +152,7 @@ export function AboutContent() {
               What we stand for
             </h2>
           </Reveal>
-          <StaggerContainer className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
+          <StaggerContainer className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
             {values.map((value) => (
               <StaggerItem key={value.title}>
                 <motion.div
