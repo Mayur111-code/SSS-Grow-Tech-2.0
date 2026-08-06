@@ -30,7 +30,7 @@ export function ServicesSection() {
   const { data, isLoading } = useServicesPublic();
 
   return (
-    <section className="relative py-20 sm:py-28" id="services">
+    <section className="relative overflow-hidden py-20 sm:py-28" id="services">
       <div className="pointer-events-none absolute left-1/2 top-0 h-72 w-[600px] -translate-x-1/2 rounded-full bg-accent-500/10 blur-[120px]" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="mx-auto max-w-2xl text-center">

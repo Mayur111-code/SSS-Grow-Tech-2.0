@@ -1,644 +1,251 @@
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
-// import { Reveal } from "@/hooks/use-animations";
-// import { useTechnologiesPublic } from "@/services/queries";
-// import type { Technology } from "@/types";
-
-// const COPIES = 4;
-// const BASE_GAP = 16;
-
-// const FALLBACK: Array<Omit<Technology, "_id">> = [
-//   { name: "React", slug: "react", category: "Frontend", icon: "", color: "#61dafb", proficiency: 95, isActive: true, featured: true, sortOrder: 1 },
-//   { name: "Next.js", slug: "next-js", category: "Frontend", icon: "", color: "#667eea", proficiency: 95, isActive: true, featured: true, sortOrder: 2 },
-//   { name: "TypeScript", slug: "typescript", category: "Frontend", icon: "", color: "#3178c6", proficiency: 94, isActive: true, featured: true, sortOrder: 3 },
-//   { name: "JavaScript", slug: "javascript", category: "Frontend", icon: "", color: "#f7df1e", proficiency: 96, isActive: true, featured: true, sortOrder: 4 },
-//   { name: "Tailwind CSS", slug: "tailwind-css", category: "Frontend", icon: "", color: "#06b6d4", proficiency: 96, isActive: true, featured: true, sortOrder: 5 },
-//   { name: "Framer Motion", slug: "framer-motion", category: "Frontend", icon: "", color: "#e34f26", proficiency: 90, isActive: true, featured: false, sortOrder: 6 },
-//   { name: "GSAP", slug: "gsap", category: "Frontend", icon: "", color: "#88ce02", proficiency: 88, isActive: true, featured: false, sortOrder: 7 },
-//   { name: "Redux", slug: "redux", category: "Frontend", icon: "", color: "#764abc", proficiency: 87, isActive: true, featured: false, sortOrder: 8 },
-//   { name: "Node.js", slug: "node-js", category: "Backend", icon: "", color: "#339933", proficiency: 92, isActive: true, featured: true, sortOrder: 9 },
-//   { name: "Express.js", slug: "express-js", category: "Backend", icon: "", color: "#8f8f8f", proficiency: 90, isActive: true, featured: false, sortOrder: 10 },
-//   { name: "Python", slug: "python", category: "Backend", icon: "", color: "#3776ab", proficiency: 88, isActive: true, featured: false, sortOrder: 11 },
-//   { name: "MongoDB", slug: "mongodb", category: "Database", icon: "", color: "#47a248", proficiency: 90, isActive: true, featured: true, sortOrder: 12 },
-//   { name: "PostgreSQL", slug: "postgresql", category: "Database", icon: "", color: "#4169e1", proficiency: 86, isActive: true, featured: false, sortOrder: 13 },
-//   { name: "Firebase", slug: "firebase", category: "Cloud", icon: "", color: "#ffca28", proficiency: 84, isActive: true, featured: false, sortOrder: 14 },
-//   { name: "Docker", slug: "docker", category: "DevOps", icon: "", color: "#2496ed", proficiency: 82, isActive: true, featured: false, sortOrder: 15 },
-//   { name: "Git", slug: "git", category: "DevOps", icon: "", color: "#f05033", proficiency: 93, isActive: true, featured: false, sortOrder: 16 },
-//   { name: "GitHub", slug: "github", category: "DevOps", icon: "", color: "#8b5cf6", proficiency: 91, isActive: true, featured: false, sortOrder: 17 },
-//   { name: "AWS", slug: "aws", category: "Cloud", icon: "", color: "#ff9900", proficiency: 82, isActive: true, featured: true, sortOrder: 18 },
-//   { name: "Cloudinary", slug: "cloudinary", category: "Cloud", icon: "", color: "#3448c5", proficiency: 85, isActive: true, featured: false, sortOrder: 19 },
-//   { name: "Google Cloud", slug: "google-cloud", category: "Cloud", icon: "", color: "#4285f4", proficiency: 80, isActive: true, featured: false, sortOrder: 20 },
-//   { name: "OpenAI", slug: "openai", category: "AI", icon: "", color: "#10a37f", proficiency: 88, isActive: true, featured: true, sortOrder: 21 },
-//   { name: "Gemini", slug: "gemini", category: "AI", icon: "", color: "#e879f9", proficiency: 86, isActive: true, featured: false, sortOrder: 22 },
-//   { name: "Vercel", slug: "vercel", category: "Cloud", icon: "", color: "#a1a1aa", proficiency: 85, isActive: true, featured: false, sortOrder: 23 },
-//   { name: "Render", slug: "render", category: "Cloud", icon: "", color: "#46e3b7", proficiency: 80, isActive: true, featured: false, sortOrder: 24 },
-//   { name: "Figma", slug: "figma", category: "Design", icon: "", color: "#f24e1e", proficiency: 89, isActive: true, featured: false, sortOrder: 25 },
-//   { name: "Postman", slug: "postman", category: "DevOps", icon: "", color: "#ff6c37", proficiency: 87, isActive: true, featured: false, sortOrder: 26 },
-// ];
-
-// interface MarqueeRowProps {
-//   items: Technology[];
-//   direction: "left" | "right";
-//   speed: number;
-// }
-
-// function TechLogo({ tech, className }: { tech: Technology; className?: string }) {
-//   const isUrl = /^(https?:)?\/\//i.test(tech.icon) || tech.icon.startsWith("/");
-//   if (isUrl) {
-//     return (
-//       // eslint-disable-next-line @next/next/no-img-element
-//       <img src={tech.icon} alt={tech.name} draggable={false} className={`${className} object-contain`} />
-//     );
-//   }
-//   const initials = tech.name.replace(/[^a-z]/gi, "").slice(0, 2).toUpperCase() || "T";
-//   return <span className={`${className} font-display font-bold`}>{initials}</span>;
-// }
-
-// function TechCard({ tech }: { tech: Technology }) {
-//   const color = tech.color || "#6366f1";
-//   return (
-//     <article className="group/card relative shrink-0">
-//       <div
-//         aria-hidden
-//         className="pointer-events-none absolute -inset-1 rounded-3xl opacity-0 blur-lg transition-opacity duration-300 group-hover/card:opacity-70"
-//         style={{ background: `radial-gradient(60% 60% at 50% 50%, ${color}59, transparent 70%)` }}
-//       />
-//       <div className="glass-panel relative flex w-[140px] flex-col items-center gap-2 rounded-2xl px-4 py-4 transition-transform duration-[250ms] ease-out will-change-transform group-hover/card:scale-[1.06] sm:w-[170px] sm:py-5 md:w-[190px]">
-//         <div
-//           className="flex h-11 w-11 items-center justify-center rounded-xl sm:h-14 sm:w-14"
-//           style={{
-//             background: `linear-gradient(135deg, ${color}2e, ${color}0d)`,
-//             border: `1px solid ${color}40`,
-//             color,
-//           }}
-//         >
-//           <TechLogo tech={tech} className="h-6 w-6 sm:h-7 sm:w-7" />
-//         </div>
-//         <span className="text-sm font-semibold text-slate-800 sm:text-[15px] dark:text-slate-100">{tech.name}</span>
-//         <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 sm:text-[11px] dark:text-slate-400">
-//           {tech.category || "Tech"}
-//         </span>
-//       </div>
-//       <div
-//         aria-hidden
-//         className="pointer-events-none absolute inset-0 rounded-2xl border-2 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100"
-//         style={{ borderColor: `${color}66` }}
-//       />
-//     </article>
-//   );
-// }
-
-// function MarqueeRow({ items, direction, speed }: MarqueeRowProps) {
-//   const groupRef = useRef<HTMLDivElement>(null);
-//   const [groupWidth, setGroupWidth] = useState(0);
-//   const baseX = useMotionValue(0);
-//   const x = useMotionValue(0);
-//   const pausedRef = useRef(false);
-//   const draggingRef = useRef(false);
-//   const pointer = useRef({ active: false, startX: 0, startBase: 0 });
-
-//   useEffect(() => {
-//     const el = groupRef.current;
-//     if (!el) return;
-//     const update = () => setGroupWidth(el.offsetWidth);
-//     update();
-//     const ro = new ResizeObserver(update);
-//     ro.observe(el);
-//     return () => ro.disconnect();
-//   }, []);
-
-//   useAnimationFrame((_, delta) => {
-//     if (pausedRef.current || draggingRef.current || !groupWidth) return;
-//     const move = (speed * delta) / 1000;
-//     const next = (baseX.get() + (direction === "left" ? -move : move)) % groupWidth;
-//     x.set(next > 0 ? next - groupWidth : next);
-//   });
-
-//   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-//     draggingRef.current = true;
-//     pointer.current = { active: true, startX: e.clientX, startBase: baseX.get() };
-//     e.currentTarget.setPointerCapture(e.pointerId);
-//   };
-
-//   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-//     if (!pointer.current.active) return;
-//     baseX.set(pointer.current.startBase + (e.clientX - pointer.current.startX));
-//   };
-
-//   const endDrag = () => {
-//     pointer.current.active = false;
-//     draggingRef.current = false;
-//   };
-
-//   const group = (key: number) => (
-//     <div ref={key === 0 ? groupRef : undefined} key={key} className="flex shrink-0 items-center pr-4" style={{ gap: BASE_GAP }}>
-//       {items.map((tech) => (
-//         <TechCard key={tech._id} tech={tech} />
-//       ))}
-//     </div>
-//   );
-
-//   return (
-//     <div
-//       className="mask-fade-x overflow-hidden"
-//       onPointerEnter={() => {
-//         pausedRef.current = true;
-//       }}
-//       onPointerLeave={() => {
-//         pausedRef.current = false;
-//       }}
-//     >
-//       <motion.div
-//         className="flex w-max items-center will-change-transform"
-//         style={{ x, touchAction: "pan-y" }}
-//         onPointerDown={handlePointerDown}
-//         onPointerMove={handlePointerMove}
-//         onPointerUp={endDrag}
-//         onPointerCancel={endDrag}
-//       >
-//         {Array.from({ length: COPIES }, (_, i) => group(i))}
-//       </motion.div>
-//     </div>
-//   );
-// }
-
-// export function TechMarquee() {
-//   const { data } = useTechnologiesPublic();
-//   const rawItems = data?.items || [];
-
-//   const items: Technology[] =
-//     rawItems.length > 0
-//       ? rawItems
-//       : FALLBACK.map((tech, i) => ({
-//           _id: `fallback-${i}`,
-//           ...tech,
-//         }));
-
-//   return (
-//     <section className="relative overflow-hidden py-14">
-//       <Reveal className="mx-auto max-w-2xl px-4 text-center">
-//         <p className="text-sm font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">Our Technology Stack</p>
-//         <h2 className="mt-3 font-display text-2xl font-bold text-slate-900 sm:text-3xl dark:text-white">
-//           Powering innovation with the latest tools
-//         </h2>
-//       </Reveal>
-//       <div className="relative mt-10 space-y-4">
-//         <MarqueeRow items={items} direction="right" speed={55} />
-//         <MarqueeRow items={items} direction="left" speed={45} />
-//       </div>
-//     </section>
-//   );
-// }
-
-
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
+import {
+  SiReact,
+  SiNextdotjs,
+  SiTypescript,
+  SiJavascript,
+  SiNodedotjs,
+  SiExpress,
+  SiMongodb,
+  SiPostgresql,
+  SiFirebase,
+  SiTailwindcss,
+  SiFramer,
+  SiGsap,
+  SiRedux,
+  SiDocker,
+  SiGit,
+  SiGithub,
+  SiCloudinary,
+  SiGooglecloud,
+  SiVercel,
+  SiRender,
+  SiOpenaigym,
+  SiGooglegemini,
+  SiFigma,
+  SiPostman,
+} from "react-icons/si";
+import type { IconType } from "react-icons";
+import { Cloud } from "lucide-react";
 import { Reveal } from "@/hooks/use-animations";
 import { useTechnologiesPublic } from "@/services/queries";
 import type { Technology } from "@/types";
 
 const COPIES = 4;
-const BASE_GAP = 16;
+const GAP = 12;
 
 const FALLBACK: Array<Omit<Technology, "_id">> = [
-  {
-    name: "React",
-    slug: "react",
-    category: "Frontend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg",
-    color: "#61dafb",
-    proficiency: 95,
-    isActive: true,
-    featured: true,
-    sortOrder: 1,
-  },
-  {
-    name: "Next.js",
-    slug: "next-js",
-    category: "Frontend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/nextdotjs.svg",
-    color: "#667eea",
-    proficiency: 95,
-    isActive: true,
-    featured: true,
-    sortOrder: 2,
-  },
-  {
-    name: "TypeScript",
-    slug: "typescript",
-    category: "Frontend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/typescript.svg",
-    color: "#3178c6",
-    proficiency: 94,
-    isActive: true,
-    featured: true,
-    sortOrder: 3,
-  },
-  {
-    name: "JavaScript",
-    slug: "javascript",
-    category: "Frontend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/javascript.svg",
-    color: "#f7df1e",
-    proficiency: 96,
-    isActive: true,
-    featured: true,
-    sortOrder: 4,
-  },
-  {
-    name: "Tailwind CSS",
-    slug: "tailwind-css",
-    category: "Frontend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/tailwindcss.svg",
-    color: "#06b6d4",
-    proficiency: 96,
-    isActive: true,
-    featured: true,
-    sortOrder: 5,
-  },
-  {
-    name: "Framer Motion",
-    slug: "framer-motion",
-    category: "Frontend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/framer.svg",
-    color: "#e34f26",
-    proficiency: 90,
-    isActive: true,
-    featured: false,
-    sortOrder: 6,
-  },
-  {
-    name: "GSAP",
-    slug: "gsap",
-    category: "Frontend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/gsap.svg",
-    color: "#88ce02",
-    proficiency: 88,
-    isActive: true,
-    featured: false,
-    sortOrder: 7,
-  },
-  {
-    name: "Redux",
-    slug: "redux",
-    category: "Frontend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/redux.svg",
-    color: "#764abc",
-    proficiency: 87,
-    isActive: true,
-    featured: false,
-    sortOrder: 8,
-  },
-  {
-    name: "Node.js",
-    slug: "node-js",
-    category: "Backend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/nodedotjs.svg",
-    color: "#339933",
-    proficiency: 92,
-    isActive: true,
-    featured: true,
-    sortOrder: 9,
-  },
-  {
-    name: "Express.js",
-    slug: "express-js",
-    category: "Backend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/express.svg",
-    color: "#8f8f8f",
-    proficiency: 90,
-    isActive: true,
-    featured: false,
-    sortOrder: 10,
-  },
-  {
-    name: "Python",
-    slug: "python",
-    category: "Backend",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/python.svg",
-    color: "#3776ab",
-    proficiency: 88,
-    isActive: true,
-    featured: false,
-    sortOrder: 11,
-  },
-  {
-    name: "MongoDB",
-    slug: "mongodb",
-    category: "Database",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/mongodb.svg",
-    color: "#47a248",
-    proficiency: 90,
-    isActive: true,
-    featured: true,
-    sortOrder: 12,
-  },
-  {
-    name: "PostgreSQL",
-    slug: "postgresql",
-    category: "Database",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/postgresql.svg",
-    color: "#4169e1",
-    proficiency: 86,
-    isActive: true,
-    featured: false,
-    sortOrder: 13,
-  },
-  {
-    name: "Firebase",
-    slug: "firebase",
-    category: "Cloud",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/firebase.svg",
-    color: "#ffca28",
-    proficiency: 84,
-    isActive: true,
-    featured: false,
-    sortOrder: 14,
-  },
-  {
-    name: "Docker",
-    slug: "docker",
-    category: "DevOps",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg",
-    color: "#2496ed",
-    proficiency: 82,
-    isActive: true,
-    featured: false,
-    sortOrder: 15,
-  },
-  {
-    name: "Git",
-    slug: "git",
-    category: "DevOps",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/git.svg",
-    color: "#f05033",
-    proficiency: 93,
-    isActive: true,
-    featured: false,
-    sortOrder: 16,
-  },
-  {
-    name: "GitHub",
-    slug: "github",
-    category: "DevOps",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg",
-    color: "#8b5cf6",
-    proficiency: 91,
-    isActive: true,
-    featured: false,
-    sortOrder: 17,
-  },
-  {
-    name: "AWS",
-    slug: "aws",
-    category: "Cloud",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/amazonwebservices.svg",
-    color: "#ff9900",
-    proficiency: 82,
-    isActive: true,
-    featured: true,
-    sortOrder: 18,
-  },
-  {
-    name: "Cloudinary",
-    slug: "cloudinary",
-    category: "Cloud",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/cloudinary.svg",
-    color: "#3448c5",
-    proficiency: 85,
-    isActive: true,
-    featured: false,
-    sortOrder: 19,
-  },
-  {
-    name: "Google Cloud",
-    slug: "google-cloud",
-    category: "Cloud",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/googlecloud.svg",
-    color: "#4285f4",
-    proficiency: 80,
-    isActive: true,
-    featured: false,
-    sortOrder: 20,
-  },
-  {
-    name: "OpenAI",
-    slug: "openai",
-    category: "AI",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/openai.svg",
-    color: "#10a37f",
-    proficiency: 88,
-    isActive: true,
-    featured: true,
-    sortOrder: 21,
-  },
-  {
-    name: "Gemini",
-    slug: "gemini",
-    category: "AI",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/google.svg",
-    color: "#e879f9",
-    proficiency: 86,
-    isActive: true,
-    featured: false,
-    sortOrder: 22,
-  },
-  {
-    name: "Vercel",
-    slug: "vercel",
-    category: "Cloud",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/vercel.svg",
-    color: "#a1a1aa",
-    proficiency: 85,
-    isActive: true,
-    featured: false,
-    sortOrder: 23,
-  },
-  {
-    name: "Render",
-    slug: "render",
-    category: "Cloud",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/render.svg",
-    color: "#46e3b7",
-    proficiency: 80,
-    isActive: true,
-    featured: false,
-    sortOrder: 24,
-  },
-  {
-    name: "Figma",
-    slug: "figma",
-    category: "Design",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/figma.svg",
-    color: "#f24e1e",
-    proficiency: 89,
-    isActive: true,
-    featured: false,
-    sortOrder: 25,
-  },
-  {
-    name: "Postman",
-    slug: "postman",
-    category: "DevOps",
-    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/postman.svg",
-    color: "#ff6c37",
-    proficiency: 87,
-    isActive: true,
-    featured: false,
-    sortOrder: 26,
-  },
+  { name: "React", slug: "react", category: "Frontend", icon: "", color: "", proficiency: 95, isActive: true, featured: true, sortOrder: 1 },
+  { name: "Next.js", slug: "next-js", category: "Frontend", icon: "", color: "", proficiency: 95, isActive: true, featured: true, sortOrder: 2 },
+  { name: "TypeScript", slug: "typescript", category: "Frontend", icon: "", color: "", proficiency: 94, isActive: true, featured: true, sortOrder: 3 },
+  { name: "JavaScript", slug: "javascript", category: "Frontend", icon: "", color: "", proficiency: 96, isActive: true, featured: true, sortOrder: 4 },
+  { name: "Tailwind CSS", slug: "tailwind-css", category: "Frontend", icon: "", color: "", proficiency: 96, isActive: true, featured: true, sortOrder: 5 },
+  { name: "Framer Motion", slug: "framer-motion", category: "Frontend", icon: "", color: "", proficiency: 90, isActive: true, featured: false, sortOrder: 6 },
+  { name: "GSAP", slug: "gsap", category: "Frontend", icon: "", color: "", proficiency: 88, isActive: true, featured: false, sortOrder: 7 },
+  { name: "Redux", slug: "redux", category: "Frontend", icon: "", color: "", proficiency: 87, isActive: true, featured: false, sortOrder: 8 },
+  { name: "Node.js", slug: "node-js", category: "Backend", icon: "", color: "", proficiency: 92, isActive: true, featured: true, sortOrder: 9 },
+  { name: "Express.js", slug: "express-js", category: "Backend", icon: "", color: "", proficiency: 90, isActive: true, featured: false, sortOrder: 10 },
+  { name: "MongoDB", slug: "mongodb", category: "Database", icon: "", color: "", proficiency: 90, isActive: true, featured: true, sortOrder: 11 },
+  { name: "PostgreSQL", slug: "postgresql", category: "Database", icon: "", color: "", proficiency: 86, isActive: true, featured: false, sortOrder: 12 },
+  { name: "Firebase", slug: "firebase", category: "Cloud", icon: "", color: "", proficiency: 84, isActive: true, featured: false, sortOrder: 13 },
+  { name: "Docker", slug: "docker", category: "DevOps", icon: "", color: "", proficiency: 82, isActive: true, featured: false, sortOrder: 14 },
+  { name: "Git", slug: "git", category: "DevOps", icon: "", color: "", proficiency: 93, isActive: true, featured: false, sortOrder: 15 },
+  { name: "GitHub", slug: "github", category: "DevOps", icon: "", color: "", proficiency: 91, isActive: true, featured: false, sortOrder: 16 },
+  { name: "AWS", slug: "aws", category: "Cloud", icon: "", color: "", proficiency: 82, isActive: true, featured: true, sortOrder: 17 },
+  { name: "Cloudinary", slug: "cloudinary", category: "Cloud", icon: "", color: "", proficiency: 85, isActive: true, featured: false, sortOrder: 18 },
+  { name: "Google Cloud", slug: "google-cloud", category: "Cloud", icon: "", color: "", proficiency: 80, isActive: true, featured: false, sortOrder: 19 },
+  { name: "OpenAI", slug: "openai", category: "AI", icon: "", color: "", proficiency: 88, isActive: true, featured: true, sortOrder: 20 },
+  { name: "Gemini", slug: "gemini", category: "AI", icon: "", color: "", proficiency: 86, isActive: true, featured: false, sortOrder: 21 },
+  { name: "Vercel", slug: "vercel", category: "Cloud", icon: "", color: "", proficiency: 85, isActive: true, featured: false, sortOrder: 22 },
+  { name: "Render", slug: "render", category: "Cloud", icon: "", color: "", proficiency: 80, isActive: true, featured: false, sortOrder: 23 },
+  { name: "Figma", slug: "figma", category: "Design", icon: "", color: "", proficiency: 89, isActive: true, featured: false, sortOrder: 24 },
+  { name: "Postman", slug: "postman", category: "DevOps", icon: "", color: "", proficiency: 87, isActive: true, featured: false, sortOrder: 25 },
 ];
 
-interface MarqueeRowProps {
-  items: Technology[];
-  direction: "left" | "right";
-  speed: number;
+const BRAND_ICONS: Record<string, IconType> = {
+  react: SiReact,
+  "next-js": SiNextdotjs,
+  typescript: SiTypescript,
+  javascript: SiJavascript,
+  "node-js": SiNodedotjs,
+  express: SiExpress,
+  "express-js": SiExpress,
+  mongodb: SiMongodb,
+  postgresql: SiPostgresql,
+  firebase: SiFirebase,
+  "tailwind-css": SiTailwindcss,
+  "framer-motion": SiFramer,
+  gsap: SiGsap,
+  redux: SiRedux,
+  docker: SiDocker,
+  git: SiGit,
+  github: SiGithub,
+  aws: Cloud,
+  cloudinary: SiCloudinary,
+  "google-cloud": SiGooglecloud,
+  openai: SiOpenaigym,
+  gemini: SiGooglegemini,
+  vercel: SiVercel,
+  render: SiRender,
+  figma: SiFigma,
+  postman: SiPostman,
+};
+
+const BRAND_COLORS: Record<string, string> = {
+  react: "#61dafb",
+  "next-js": "#94a3b8",
+  typescript: "#3178c6",
+  javascript: "#f7df1e",
+  "node-js": "#339933",
+  express: "#94a3b8",
+  "express-js": "#94a3b8",
+  mongodb: "#47a248",
+  postgresql: "#4169e1",
+  firebase: "#ffca28",
+  "tailwind-css": "#06b6d4",
+  "framer-motion": "#0055ff",
+  gsap: "#88ce02",
+  redux: "#764abc",
+  docker: "#2496ed",
+  git: "#f05032",
+  github: "#a78bfa",
+  aws: "#ff9900",
+  cloudinary: "#3448c5",
+  "google-cloud": "#4285f4",
+  openai: "#10a37f",
+  gemini: "#9c9efd",
+  vercel: "#94a3b8",
+  render: "#46e3b7",
+  figma: "#f24e1e",
+  postman: "#ff6c37",
+};
+
+function getTransformX(el: HTMLElement): number {
+  const t = window.getComputedStyle(el).transform;
+  if (!t || t === "none") return 0;
+  return new DOMMatrix(t).e;
 }
 
 function TechLogo({ tech, className }: { tech: Technology; className?: string }) {
-  const isUrl = /^(https?:)?\/\//i.test(tech.icon) || tech.icon.startsWith("/");
-  if (isUrl) {
+  const slug = (tech.slug || "").toLowerCase();
+  if (/^(https?:)?\/\//i.test(tech.icon) || tech.icon.startsWith("/")) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img src={tech.icon} alt={tech.name} draggable={false} className={`${className} object-contain`} />
     );
   }
+  const BrandIcon = BRAND_ICONS[slug];
+  if (BrandIcon) return <BrandIcon className={className} aria-hidden />;
   const initials = tech.name.replace(/[^a-z]/gi, "").slice(0, 2).toUpperCase() || "T";
   return <span className={`${className} font-display font-bold`}>{initials}</span>;
 }
 
-function TechCard({ tech }: { tech: Technology }) {
-  const color = tech.color || "#6366f1";
+function TechPill({ tech }: { tech: Technology }) {
+  const slug = (tech.slug || "").toLowerCase();
+  const color = tech.color || BRAND_COLORS[slug] || "#6366f1";
+
   return (
     <article className="group/card relative shrink-0">
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-1 rounded-3xl opacity-0 blur-lg transition-opacity duration-300 group-hover/card:opacity-70"
-        style={{ background: `radial-gradient(60% 60% at 50% 50%, ${color}59, transparent 70%)` }}
+        className="pointer-events-none absolute -inset-[3px] rounded-2xl bg-gradient-to-r from-brand-500/50 via-accent-500/50 to-brand-500/50 opacity-0 blur-[7px] transition-opacity duration-300 group-hover/card:opacity-90"
       />
-      <div className="glass-panel relative flex w-[140px] flex-col items-center gap-2 rounded-2xl px-4 py-4 transition-transform duration-[250ms] ease-out will-change-transform group-hover/card:scale-[1.06] sm:w-[170px] sm:py-5 md:w-[190px]">
-        <div
-          className="flex h-11 w-11 items-center justify-center rounded-xl sm:h-14 sm:w-14"
-          style={{
-            background: `linear-gradient(135deg, ${color}2e, ${color}0d)`,
-            border: `1px solid ${color}40`,
-            color,
-          }}
+      <div className="glass-panel relative flex w-[100px] items-center gap-2 rounded-2xl px-2.5 py-2 transition-all duration-300 ease-out group-hover/card:-translate-y-0.5 group-hover/card:border-brand-500/50 group-hover/card:shadow-[0_14px_30px_-12px_rgba(99,102,241,0.45)] sm:w-[130px] sm:px-3 sm:py-2.5 md:w-[145px]">
+        <span
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10"
+          style={{ background: `${color}1f`, color, border: `1px solid ${color}33` }}
         >
-          <TechLogo tech={tech} className="h-6 w-6 sm:h-7 sm:w-7" />
-        </div>
-        <span className="text-sm font-semibold text-slate-800 sm:text-[15px] dark:text-slate-100">{tech.name}</span>
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 sm:text-[11px] dark:text-slate-400">
-          {tech.category || "Tech"}
+          <TechLogo tech={tech} className="h-5 w-5 sm:h-6 sm:w-6" />
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate text-[13px] font-semibold text-slate-800 dark:text-slate-100">{tech.name}</span>
+          <span className="block truncate text-[9px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            {tech.category || "Tech"}
+          </span>
         </span>
       </div>
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-2xl border-2 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100"
-        style={{ borderColor: `${color}66` }}
-      />
     </article>
   );
 }
 
-function MarqueeRow({ items, direction, speed }: MarqueeRowProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [groupWidth, setGroupWidth] = useState(0);
-  const x = useMotionValue(0);
-  const pausedRef = useRef(false);
-  const draggingRef = useRef(false);
-  const dragStartX = useRef(0);
-  const dragStartValue = useRef(0);
+interface MarqueeRowProps {
+  items: Technology[];
+  direction: "left" | "right";
+  duration: number;
+}
 
-  // Measure the width of one complete group of items
+function MarqueeRow({ items, direction, duration }: MarqueeRowProps) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const groupRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ active: false, startX: 0, baseX: 0 });
+  const [groupWidth, setGroupWidth] = useState(0);
+
   useEffect(() => {
-    const el = containerRef.current;
+    const el = groupRef.current;
     if (!el) return;
     const update = () => setGroupWidth(el.offsetWidth);
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [items]);
 
-  // Continuous animation
-  useAnimationFrame((_, delta) => {
-    if (pausedRef.current || draggingRef.current || !groupWidth) return;
-    const step = (speed * delta) / 1000 * (direction === "left" ? -1 : 1);
-    let newX = x.get() + step;
-
-    // Seamless wrap: keep x within one group width to avoid visible gaps
-    if (direction === "left") {
-      if (newX < -groupWidth) newX += groupWidth;
-    } else {
-      if (newX > groupWidth) newX -= groupWidth;
-    }
-    x.set(newX);
-  });
-
-  // Drag handling
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    draggingRef.current = true;
-    dragStartX.current = e.clientX;
-    dragStartValue.current = x.get();
-    e.currentTarget.setPointerCapture(e.pointerId);
+    const el = trackRef.current;
+    if (!el) return;
+    drag.current = { active: true, startX: e.clientX, baseX: getTransformX(el) };
+    el.style.animationPlayState = "paused";
+    el.setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!draggingRef.current) return;
-    const delta = e.clientX - dragStartX.current;
-    let newX = dragStartValue.current + delta;
+    const el = trackRef.current;
+    if (!el || !drag.current.active) return;
+    const dx = e.clientX - drag.current.startX;
+    el.style.setProperty("transform", `translateX(${drag.current.baseX + dx}px)`, "important");
+  };
 
-    // Apply same wrap logic during drag to keep it seamless
-    if (direction === "left") {
-      if (newX < -groupWidth) newX += groupWidth;
-      else if (newX > 0) newX -= groupWidth; // keep in [-groupWidth, 0]
-    } else {
-      if (newX > groupWidth) newX -= groupWidth;
-      else if (newX < 0) newX += groupWidth; // keep in [0, groupWidth]
+  const endDrag = () => {
+    const el = trackRef.current;
+    if (!el || !drag.current.active) return;
+    const current = getTransformX(el);
+    el.style.removeProperty("transform");
+    if (groupWidth > 0) {
+      const range = groupWidth * 2;
+      const elapsed = direction === "left" ? (-current / range) * duration : (1 + current / range) * duration;
+      el.style.animationDelay = `-${Math.max(0, elapsed % duration)}s`;
     }
-    x.set(newX);
+    el.style.animationPlayState = "";
+    drag.current.active = false;
   };
 
-  const handlePointerUp = () => {
-    draggingRef.current = false;
-  };
-
-  // Build the duplicated groups
-  const groups = Array.from({ length: COPIES }, (_, i) => (
-    <div
-      key={i}
-      ref={i === 0 ? containerRef : undefined}
-      className="flex shrink-0 items-center pr-4"
-      style={{ gap: BASE_GAP }}
-    >
+  const group = (key: number) => (
+    <div ref={key === 0 ? groupRef : undefined} key={key} className="flex shrink-0 items-center pr-3" style={{ gap: GAP }}>
       {items.map((tech) => (
-        <TechCard key={tech._id} tech={tech} />
+        <TechPill key={tech._id} tech={tech} />
       ))}
     </div>
-  ));
+  );
 
   return (
-    <div
-      className="mask-fade-x overflow-hidden"
-      onPointerEnter={() => (pausedRef.current = true)}
-      onPointerLeave={() => (pausedRef.current = false)}
-    >
-      <motion.div
-        className="flex w-max items-center will-change-transform"
-        style={{ x, touchAction: "pan-y" }}
+    <div className="marquee-row mask-fade-x overflow-hidden">
+      <div
+        ref={trackRef}
+        className="marquee-track flex w-max items-center"
+        style={{
+          ["--marquee-duration" as string]: `${duration}s`,
+          animationDirection: direction === "right" ? "reverse" : "normal",
+          touchAction: "pan-y",
+        }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
       >
-        {groups}
-      </motion.div>
+        {Array.from({ length: COPIES }, (_, i) => group(i))}
+      </div>
     </div>
   );
 }
@@ -655,19 +262,19 @@ export function TechMarquee() {
           ...tech,
         }));
 
+  const baseDuration = Math.max(30, items.length * 2.6);
+
   return (
-    <section className="relative overflow-hidden py-14">
+    <section className="relative overflow-hidden py-20 sm:py-28">
       <Reveal className="mx-auto max-w-2xl px-4 text-center">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">
-          Our Technology Stack
-        </p>
-        <h2 className="mt-3 font-display text-2xl font-bold text-slate-900 sm:text-3xl dark:text-white">
+        <p className="text-sm font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">Our Technology Stack</p>
+        <h2 className="mt-3 font-display text-3xl font-bold text-slate-900 sm:text-4xl dark:text-white">
           Powering innovation with the latest tools
         </h2>
       </Reveal>
-      <div className="relative mt-10 space-y-4">
-        <MarqueeRow items={items} direction="right" speed={55} />
-        <MarqueeRow items={items} direction="left" speed={45} />
+      <div className="relative mt-12 space-y-4">
+        <MarqueeRow items={items} direction="left" duration={baseDuration} />
+        <MarqueeRow items={items} direction="right" duration={baseDuration * 1.35} />
       </div>
     </section>
   );

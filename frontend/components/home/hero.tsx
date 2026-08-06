@@ -71,7 +71,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-7 inline-flex items-center gap-2 rounded-full border border-brand-500/25 bg-white/40 px-4 py-1.5 text-xs font-medium text-brand-600 backdrop-blur-md dark:bg-white/5 dark:text-brand-300"
+          className="mb-5 inline-flex items-center gap-2 rounded-full border border-brand-500/25 bg-white/40 px-4 py-1.5 text-xs font-medium text-brand-600 backdrop-blur-md sm:mb-7 dark:bg-white/5 dark:text-brand-300"
         >
           <Sparkles className="h-3.5 w-3.5" />
           Premium IT Services Agency
@@ -81,7 +81,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-          className="text-balance mx-auto max-w-4xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl dark:text-white"
+          className="text-balance mx-auto max-w-4xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 max-[400px]:text-[2rem] sm:text-6xl lg:text-7xl dark:text-white"
         >
           We Build Digital Products That{" "}
           <span className="animated-gradient-text">Grow Your Business</span>
@@ -91,7 +91,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.25 }}
-          className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg dark:text-slate-300"
+          className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-slate-600 sm:mt-6 sm:max-w-2xl sm:text-lg dark:text-slate-300"
         >
           SSS Grow Tech delivers world-class software, web, mobile, AI and cloud solutions.
           From idea to launch, we engineer digital experiences that scale with you.
@@ -101,7 +101,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.35 }}
-          className="mt-10 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4"
+          className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:items-center sm:gap-4"
         >
           <Magnetic>
             <Link href="/contact" className="block w-full sm:w-auto">
@@ -123,7 +123,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-8 inline-flex items-center gap-2 text-xs text-slate-400"
+          className="mt-6 inline-flex items-center gap-2 text-xs text-slate-400 sm:mt-8"
         >
           <MousePointer2 className="h-3.5 w-3.5" />
           <span>Explore our services below</span>
@@ -150,14 +150,14 @@ export function Hero() {
         ))}
       </div>
 
-      <div className="relative mx-auto mt-16 max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto mt-12 max-w-5xl px-4 sm:mt-16 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="glass-panel relative overflow-hidden rounded-3xl p-6 shadow-card sm:p-10"
         >
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-8">
             {stats.map((stat, i) => (
               <motion.div
                 key={stat.label}

@@ -57,15 +57,22 @@ export function Navbar() {
 
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
-  const mobileMenuTop = showAnnouncement ? "top-[108px]" : "top-[72px]";
-  const mobileMenuMaxH = showAnnouncement ? "max-h-[calc(100dvh-130px)]" : "max-h-[calc(100dvh-92px)]";
+  const mobileMenuTop = showAnnouncement
+    ? "top-[calc(108px+env(safe-area-inset-top))]"
+    : "top-[calc(72px+env(safe-area-inset-top))]";
+  const mobileMenuMaxH = showAnnouncement
+    ? "max-h-[calc(100dvh-130px-env(safe-area-inset-top))]"
+    : "max-h-[calc(100dvh-92px-env(safe-area-inset-top))]";
 
   return (
     <>
       <ScrollProgress />
 
       {showAnnouncement && (
-        <div className="relative z-50 flex items-center justify-center gap-2 bg-gradient-to-r from-brand-600 via-accent-600 to-pink-600 px-4 py-2 text-center text-xs font-medium text-white sm:text-sm">
+        <div
+          className="relative z-50 flex items-center justify-center gap-2 bg-gradient-to-r from-brand-600 via-accent-600 to-pink-600 px-4 py-2 text-center text-xs font-medium text-white sm:text-sm"
+          style={{ paddingTop: "env(safe-area-inset-top)" }}
+        >
           <span className="hidden sm:inline">We&apos;re hiring! Check out our open positions</span>
           <span className="sm:hidden">Now hiring across India</span>
           <Link href="/careers" className="inline-flex items-center gap-0.5 underline underline-offset-2 hover:opacity-80">
@@ -80,8 +87,9 @@ export function Navbar() {
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-40 transition-all duration-500",
-          showAnnouncement ? "mt-9" : "mt-0"
+          showAnnouncement ? "mt-[calc(36px+env(safe-area-inset-top))]" : "mt-0"
         )}
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
         <nav
           className={cn(
