@@ -336,11 +336,4 @@
   .text-balance {
     text-wrap: balance;
   }
-
-  @media (hover: hover) and (pointer: fine) {
-    .cursor-custom,
-    .cursor-custom * {
-      cursor: none !important;
-    }
-  }
 }

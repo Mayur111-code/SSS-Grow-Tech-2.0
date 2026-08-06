@@ -57,6 +57,9 @@ export function Navbar() {
 
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
+  const mobileMenuTop = showAnnouncement ? "top-[108px]" : "top-[72px]";
+  const mobileMenuMaxH = showAnnouncement ? "max-h-[calc(100dvh-130px)]" : "max-h-[calc(100dvh-92px)]";
+
   return (
     <>
       <ScrollProgress />
@@ -97,13 +100,13 @@ export function Navbar() {
             )}
           />
 
-          <Link href="/" className="relative z-10 shrink-0">
+          <Link href="/" className="relative z-10 min-w-0 shrink-0">
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
-              <Logo />
+              <Logo textClassName="text-lg sm:text-xl" />
             </motion.div>
           </Link>
 
-          <div className="hidden items-center gap-1 lg:flex">
+          <div className="hidden items-center gap-0.5 lg:flex">
             {navLinks.map((link) => {
               const active = isActive(link.href);
               return (
@@ -111,7 +114,7 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "group relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-300",
+                    "group relative rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60",
                     active
                       ? "text-brand-600 dark:text-brand-400"
                       : "text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
@@ -138,12 +141,12 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="relative z-10 flex items-center gap-2">
+          <div className="relative z-10 flex items-center gap-1.5 sm:gap-2">
             <motion.button
               whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.92 }}
               onClick={toggleTheme}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white/50 text-slate-600 backdrop-blur transition hover:border-brand-500 hover:text-brand-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-brand-400 dark:hover:text-brand-300"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white/50 text-slate-600 backdrop-blur transition hover:border-brand-500 hover:text-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-brand-400 dark:hover:text-brand-300"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -191,8 +194,9 @@ export function Navbar() {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="relative z-20 flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white/50 text-slate-600 backdrop-blur lg:hidden dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
-              aria-label="Menu"
+              className="relative z-20 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white/50 text-slate-600 backdrop-blur focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 lg:hidden dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -231,9 +235,9 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -24, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-x-3 top-[76px] z-40 origin-top overflow-hidden rounded-3xl border border-slate-200 bg-white/95 shadow-2xl backdrop-blur-2xl lg:hidden dark:border-white/10 dark:bg-[#0a0a12]/95"
+            className={`fixed inset-x-3 z-40 origin-top overflow-hidden rounded-3xl border border-slate-200 bg-white/95 shadow-2xl backdrop-blur-2xl lg:hidden dark:border-white/10 dark:bg-[#0a0a12]/95 ${mobileMenuTop}`}
           >
-            <div className="max-h-[calc(100vh-120px)] overflow-y-auto p-5">
+            <div className={`overflow-y-auto p-5 ${mobileMenuMaxH}`}>
               <div className="space-y-1">
                 {navLinks.map((link, i) => {
                   const active = isActive(link.href);

@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { FloatingCTA } from "@/components/layout/floating-cta";
-import { CustomCursor } from "@/components/effects/custom-cursor";
 import { Particles } from "@/components/effects/particles";
 import { SmoothScroll } from "@/components/effects/smooth-scroll";
 import { usePublicSettings } from "@/services/queries";
@@ -26,7 +25,6 @@ export default function WebsiteLayout({ children }: { children: React.ReactNode 
   return (
     <>
       <ScrollToTop />
-      <CustomCursor />
       <Particles />
       <SmoothScroll>
         <Navbar />

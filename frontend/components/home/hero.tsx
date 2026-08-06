@@ -101,18 +101,18 @@ export function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.35 }}
-          className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          className="mt-10 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4"
         >
           <Magnetic>
-            <Link href="/contact">
-              <Button size="lg" variant="gradient" magnetic className="btn-shine">
+            <Link href="/contact" className="block w-full sm:w-auto">
+              <Button size="lg" variant="gradient" magnetic className="w-full btn-shine sm:w-auto">
                 Start Your Project <ArrowRight className="h-5 w-5" />
               </Button>
             </Link>
           </Magnetic>
           <Magnetic>
-            <Link href="/portfolio">
-              <Button size="lg" variant="outline" magnetic>
+            <Link href="/portfolio" className="block w-full sm:w-auto">
+              <Button size="lg" variant="outline" magnetic className="w-full sm:w-auto">
                 <Play className="h-4 w-4" /> View Our Work
               </Button>
             </Link>

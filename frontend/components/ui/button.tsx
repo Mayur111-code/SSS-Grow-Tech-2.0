@@ -26,10 +26,10 @@ const variants: Record<string, string> = {
 };
 
 const sizes: Record<string, string> = {
-  sm: "h-8 px-3 text-xs gap-1.5",
-  md: "h-10 px-4 text-sm gap-2",
+  sm: "h-9 px-3.5 text-xs gap-1.5",
+  md: "h-11 px-4 text-sm gap-2",
   lg: "h-12 px-6 text-base gap-2.5",
-  icon: "h-10 w-10",
+  icon: "h-11 w-11",
 };
 
 export function Button({

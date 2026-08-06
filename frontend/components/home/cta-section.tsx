@@ -35,12 +35,12 @@ export function CTASection() {
                 Book a free consultation and let our experts help you build the right solution for
                 your business goals.
               </p>
-              <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <div className="mt-9 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
                 <Magnetic>
-                  <Link href="/contact">
+                  <Link href="/contact" className="block w-full sm:w-auto">
                     <Button
                       size="lg"
-                      className="btn-shine bg-white text-brand-700 shadow-xl hover:bg-slate-100"
+                      className="w-full btn-shine bg-white text-brand-700 shadow-xl hover:bg-slate-100 sm:w-auto"
                       magnetic
                     >
                       Get a Free Quote <ArrowRight className="h-5 w-5" />
@@ -48,11 +48,11 @@ export function CTASection() {
                   </Link>
                 </Magnetic>
                 <Magnetic>
-                  <Link href="/pricing">
+                  <Link href="/pricing" className="block w-full sm:w-auto">
                     <Button
                       size="lg"
                       variant="outline"
-                      className="border-white/40 text-white hover:border-white hover:bg-white/10"
+                      className="w-full border-white/40 text-white hover:border-white hover:bg-white/10 sm:w-auto"
                       magnetic
                     >
                       <MessageSquareText className="h-5 w-5" /> View Pricing
