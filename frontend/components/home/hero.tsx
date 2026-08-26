@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, Play, Sparkles, Code2, Cloud, BrainCircuit, MousePointer2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/effects/magnetic";
 import { useCounter } from "@/hooks/use-animations";
+import { HERO_IMAGES } from "@/lib/hero-images";
 
 const stats = [
   { value: 250, suffix: "+", label: "Projects Delivered" },
@@ -50,9 +52,26 @@ export function Hero() {
   return (
     <section
       onMouseMove={handleMouseMove}
-      className="relative overflow-hidden bg-mesh pt-36 pb-20 sm:pt-44 sm:pb-28"
+      className="relative overflow-hidden pt-36 pb-20 sm:pt-44 sm:pb-28"
     >
-      <div className="absolute inset-0 bg-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_75%)]" />
+      {/* Background image — clearly visible */}
+      <div className="absolute inset-0">
+        <Image
+          src={HERO_IMAGES.home}
+          alt=""
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+          priority
+          unoptimized
+        />
+        {/* Balanced gradient overlay — image stays visible, text stays readable */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/55 via-white/25 to-white/65 dark:from-[#09090f]/45 dark:via-[#09090f]/20 dark:to-[#09090f]/60" />
+      </div>
+
+      {/* Decorative mesh on top of image */}
+      <div className="absolute inset-0 bg-mesh" />
+      <div className="absolute inset-0 bg-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_75%)] dark:opacity-40" />
 
       <motion.div
         aria-hidden

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { ServicesGrid } from "@/components/services/services-grid";
+import { HERO_IMAGES } from "@/lib/hero-images";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -19,6 +20,7 @@ export default function ServicesPage() {
           </>
         }
         description="End-to-end technology services designed to build, launch and grow world-class digital products."
+        image={HERO_IMAGES.services}
       />
       <ServicesGrid />
     </>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { CareersList } from "@/components/careers/careers-list";
+import { HERO_IMAGES } from "@/lib/hero-images";
 
 export const metadata: Metadata = {
   title: "Careers",
@@ -19,6 +20,7 @@ export default function CareersPage() {
           </>
         }
         description="We're looking for passionate people who love building great products and solving hard problems."
+        image={HERO_IMAGES.careers}
       />
       <CareersList />
     </>

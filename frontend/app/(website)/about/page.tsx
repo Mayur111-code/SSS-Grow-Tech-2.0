@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { AboutContent } from "@/components/about/about-content";
+import { HERO_IMAGES } from "@/lib/hero-images";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -19,6 +20,7 @@ export default function AboutPage() {
           </>
         }
         description="SSS Grow Tech is a full-stack digital agency helping ambitious businesses design, build and scale products that matter."
+        image={HERO_IMAGES.about}
       />
       <AboutContent />
     </>

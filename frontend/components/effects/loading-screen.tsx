@@ -2,24 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Logo } from "@/components/ui/logo";
+import Image from "next/image";
 
-export function LoadingScreen({ minimal = false }: { minimal?: boolean }) {
+export function LoadingScreen() {
   const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    let current = 0;
-    const interval = setInterval(() => {
-      current += Math.random() * 18;
-      if (current >= 100) {
-        current = 100;
-        clearInterval(interval);
-        setTimeout(() => setLoading(false), 350);
-      }
-      setProgress(Math.floor(current));
-    }, 160);
-    return () => clearInterval(interval);
+    const timer = setTimeout(() => setLoading(false), 1800);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -34,42 +24,64 @@ export function LoadingScreen({ minimal = false }: { minimal?: boolean }) {
       {loading && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.6 } }}
-          className="fixed inset-0 z-[9998] flex flex-col items-center justify-center bg-mesh dark:bg-[#09090f]"
+          exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }}
+          className="fixed inset-0 z-[9998] flex items-center justify-center bg-[rgb(var(--bg))]"
         >
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500/20 blur-[100px] animate-pulse-glow" />
+          {/* Subtle background glow */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-500/10 blur-[80px]" />
 
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="relative flex flex-col items-center gap-7"
-          >
-            {minimal ? (
-              <motion.span
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ repeat: Infinity, duration: 1.4 }}
-                className="font-display text-2xl font-bold"
-              >
-                SSS <span className="text-gradient">Grow Tech</span>
-              </motion.span>
-            ) : (
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ repeat: Infinity, duration: 1.6 }}
-              >
-                <Logo size="lg" glow />
-              </motion.div>
-            )}
-            <div className="h-[3px] w-56 overflow-hidden rounded-full bg-white/10 dark:bg-white/10">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent-500"
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.2 }}
+          {/* Circular loader */}
+          <div className="relative flex items-center justify-center" style={{ width: 110, height: 110 }}>
+            {/* Outer glow */}
+            <div className="absolute inset-0 rounded-full bg-brand-500/10 blur-xl" />
+
+            {/* SVG rotating ring */}
+            <svg
+              className="absolute inset-0"
+              viewBox="0 0 110 110"
+              fill="none"
+              style={{ animation: "loaderSpin 1.8s linear infinite" }}
+            >
+              <defs>
+                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#6366f1" />
+                  <stop offset="50%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#ec4899" />
+                </linearGradient>
+              </defs>
+              <circle
+                cx="55"
+                cy="55"
+                r="50"
+                stroke="url(#ringGradient)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray="220 314"
+              />
+            </svg>
+
+            {/* Inner circle background */}
+            <div className="relative flex h-[76px] w-[76px] items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200/60 dark:bg-[#0f101a] dark:ring-white/10">
+              <Image
+                src="/sssgrow.jpg"
+                alt="SSS Grow Tech"
+                width={52}
+                height={52}
+                className="rounded-full object-contain"
+                priority
               />
             </div>
-            <p className="text-xs tracking-widest text-slate-500 dark:text-white/50">{progress}%</p>
-          </motion.div>
+          </div>
+
+          {/* Brand text below */}
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="absolute bottom-[calc(50%-80px)] text-xs font-medium tracking-widest text-slate-400 dark:text-white/40"
+          >
+            SSS GROW TECH
+          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { ContactForm } from "@/components/contact/contact-form";
+import { HERO_IMAGES } from "@/lib/hero-images";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -19,6 +20,7 @@ export default function ContactPage() {
           </>
         }
         description="Tell us about your project and our team will get back to you within 24 hours."
+        image={HERO_IMAGES.contact}
       />
       <ContactForm />
     </>

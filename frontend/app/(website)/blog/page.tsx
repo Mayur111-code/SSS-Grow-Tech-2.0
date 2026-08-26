@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { BlogGrid } from "@/components/blog/blog-grid";
+import { HERO_IMAGES } from "@/lib/hero-images";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -19,6 +20,7 @@ export default function BlogPage() {
           </>
         }
         description="Expert articles, guides and thought leadership from our engineering and design teams."
+        image={HERO_IMAGES.blog}
       />
       <BlogGrid />
     </>

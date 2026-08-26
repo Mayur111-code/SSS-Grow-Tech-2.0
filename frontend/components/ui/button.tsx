@@ -13,16 +13,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<string, string> = {
   primary:
-    "bg-brand-600 text-white hover:bg-brand-700 shadow-[0_8px_30px_-8px_rgba(99,102,241,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.8)]",
+    "bg-brand-600 text-white hover:bg-brand-700 shadow-[0_8px_30px_-8px_rgba(99,102,241,0.5)] hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.7)]",
   gradient:
-    "text-white bg-gradient-to-r from-brand-600 via-accent-600 to-pink-600 bg-[length:200%_auto] hover:bg-right shadow-[0_8px_30px_-8px_rgba(139,92,246,0.6)] transition-[background-position] duration-500",
+    "text-white bg-gradient-to-r from-brand-600 via-accent-600 to-pink-600 bg-[length:200%_auto] hover:bg-right shadow-[0_8px_30px_-8px_rgba(139,92,246,0.5)] transition-[background-position] duration-500",
   secondary:
     "bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200",
   outline:
-    "border border-slate-300 text-slate-700 hover:border-brand-500 hover:text-brand-600 dark:border-slate-700 dark:text-slate-200 dark:hover:border-brand-400 dark:hover:text-brand-300 bg-transparent",
+    "border border-slate-300 text-slate-700 hover:border-brand-500 hover:text-brand-600 hover:bg-brand-50 dark:border-slate-700 dark:text-slate-200 dark:hover:border-brand-400 dark:hover:text-brand-300 dark:hover:bg-transparent bg-transparent",
   ghost:
-    "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 bg-transparent",
-  danger: "bg-red-600 text-white hover:bg-red-700 shadow-[0_8px_30px_-8px_rgba(239,68,68,0.6)]",
+    "text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white bg-transparent",
+  danger: "bg-red-600 text-white hover:bg-red-700 shadow-[0_8px_30px_-8px_rgba(239,68,68,0.5)]",
 };
 
 const sizes: Record<string, string> = {
@@ -73,7 +73,7 @@ export function Button({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center rounded-xl font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98]",
+        "inline-flex cursor-pointer items-center justify-center rounded-xl font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.98]",
         variants[variant],
         sizes[size],
         className

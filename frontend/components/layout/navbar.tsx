@@ -103,7 +103,7 @@ export function Navbar() {
             className={cn(
               "absolute inset-0 -z-10 transition-all duration-500",
               scrolled
-                ? "mx-2 mt-1 rounded-2xl border border-slate-200/70 bg-white/70 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.12)] backdrop-blur-2xl backdrop-saturate-150 sm:mx-4 lg:mx-auto lg:max-w-6xl dark:border-white/10 dark:bg-[#0a0a12]/70"
+                ? "mx-2 mt-1 rounded-2xl border border-slate-200/70 bg-white/80 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] backdrop-blur-2xl backdrop-saturate-150 sm:mx-4 lg:mx-auto lg:max-w-6xl dark:border-white/10 dark:bg-[#0a0a12]/70"
                 : "mx-0 border border-transparent bg-transparent"
             )}
           />
