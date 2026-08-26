@@ -24,7 +24,7 @@ export default function AdminCareersPage() {
         ] },
         { name: "location", label: "Location", type: "text" },
         { name: "experience", label: "Experience", type: "text" },
-        { name: "salary", label: "Salary", type: "text" },
+        { name: "salary", label: "Salary (INR)", type: "text", placeholder: "e.g. ₹25,000 / month or ₹4,50,000 / year" },
         { name: "description", label: "Description", type: "textarea", rows: 6, required: true, spanFull: true },
         { name: "status", label: "Status", type: "select", options: [
           { value: "open", label: "Open" },

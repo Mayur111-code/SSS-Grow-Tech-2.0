@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Clock, BadgeDollarSign, Briefcase, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, IndianRupee, Briefcase, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -124,7 +124,7 @@ export function CareerDetails({ slug }: { slug: string }) {
               </span>
               {job.salary && (
                 <span className="inline-flex items-center gap-2">
-                  <BadgeDollarSign className="h-4 w-4 text-brand-500" /> {job.salary}
+                  <IndianRupee className="h-4 w-4 text-brand-500" /> {job.salary}
                 </span>
               )}
               {job.applicationDeadline && (

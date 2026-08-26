@@ -11,7 +11,7 @@ import { HERO_IMAGES } from "@/lib/hero-images";
 
 const stats = [
   { value: 250, suffix: "+", label: "Projects Delivered" },
-  { value: 120, suffix: "+", label: "Happy Clients" },
+  { value: 200, suffix: "+", label: "Happy Clients" },
   { value: 10, suffix: "+", label: "Years Experience" },
   { value: 15, suffix: "+", label: "Industry Awards" },
 ];
