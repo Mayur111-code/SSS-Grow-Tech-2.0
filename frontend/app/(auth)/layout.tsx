@@ -3,10 +3,12 @@
 import { Logo } from "@/components/ui/logo";
 import { Particles } from "@/components/effects/particles";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { Sun, Moon } from "lucide-react";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const { theme, toggleTheme } = useTheme();
+  const { siteName } = useSiteSettings();
 
   return (
     <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-mesh px-4 py-6 sm:py-12">
@@ -31,7 +33,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           {children}
         </div>
         <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500">
-          &copy; {new Date().getFullYear()} SSS Grow Tech · sssgrowtech@gmail.com
+          &copy; {new Date().getFullYear()} {siteName} · sssgrowtech@gmail.com
         </p>
       </div>
     </div>

@@ -11,6 +11,7 @@ import { Magnetic } from "@/components/effects/magnetic";
 import { ScrollProgress } from "@/components/effects/scroll-progress";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -31,6 +32,8 @@ export function Navbar() {
   const router = useRouter();
   const { isAuthenticated, user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { settings } = useSiteSettings();
+  const announcement = settings.announcementBar as string | undefined;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -73,11 +76,17 @@ export function Navbar() {
           className="relative z-50 flex items-center justify-center gap-2 bg-gradient-to-r from-brand-600 via-accent-600 to-pink-600 px-4 py-2 text-center text-xs font-medium text-white sm:text-sm"
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
-          <span className="hidden sm:inline">We&apos;re hiring! Check out our open positions</span>
-          <span className="sm:hidden">Now hiring across India</span>
-          <Link href="/careers" className="inline-flex items-center gap-0.5 underline underline-offset-2 hover:opacity-80">
-            Apply now <ChevronRight className="h-3 w-3" />
-          </Link>
+          {announcement ? (
+            <span className="px-8 text-center">{announcement}</span>
+          ) : (
+            <>
+              <span className="hidden sm:inline">We&apos;re hiring! Check out our open positions</span>
+              <span className="sm:hidden">Now hiring across India</span>
+              <Link href="/careers" className="inline-flex items-center gap-0.5 underline underline-offset-2 hover:opacity-80">
+                Apply now <ChevronRight className="h-3 w-3" />
+              </Link>
+            </>
+          )}
           <button onClick={() => setShowAnnouncement(false)} className="absolute right-3 hover:opacity-80" aria-label="Dismiss announcement">
             <X className="h-3.5 w-3.5" />
           </button>

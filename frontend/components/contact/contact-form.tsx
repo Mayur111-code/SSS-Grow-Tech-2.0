@@ -10,6 +10,7 @@ import { Reveal, StaggerContainer, StaggerItem } from "@/hooks/use-animations";
 import { Input, Textarea, Select } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { useToast } from "@/components/ui/toast";
 import api, { getErrorMessage } from "@/lib/api";
 import type { ApiResponse } from "@/types";
@@ -25,16 +26,18 @@ const contactSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
-const contactInfo = [
-  { icon: Mail, label: "Support", value: "sssgrowtech@gmail.com", href: "mailto:sssgrowtech@gmail.com" },
-  { icon: Mail, label: "HR & Careers", value: "info.hr2200@gmail.com", href: "mailto:info.hr2200@gmail.com" },
-  { icon: Phone, label: "Phone", value: "+91 70285 07985", href: "tel:+917028507985" },
-  { icon: Phone, label: "Alternate", value: "+91 98342 32411", href: "tel:+919834232411" },
-  { icon: Clock, label: "Hours", value: "Mon - Sat, 9:00 - 18:00 (IST)" },
-];
-
 export function ContactForm() {
   const { isAuthenticated } = useAuth();
+  const { supportEmail, hrEmail, phone, phoneSecondary } = useSiteSettings();
+
+  const contactInfo = [
+    { icon: Mail, label: "Support", value: supportEmail, href: `mailto:${supportEmail}` },
+    { icon: Mail, label: "HR & Careers", value: hrEmail, href: `mailto:${hrEmail}` },
+    { icon: Phone, label: "Phone", value: phone, href: `tel:${phone.replace(/[^\d+]/g, "")}` },
+    { icon: Phone, label: "Alternate", value: phoneSecondary, href: `tel:${phoneSecondary.replace(/[^\d+]/g, "")}` },
+    { icon: Clock, label: "Hours", value: "Mon - Sat, 9:00 - 18:00 (IST)" },
+  ];
+
   const { success, error, info } = useToast();
   const router = useRouter();
   const [submitted, setSubmitted] = useState(false);

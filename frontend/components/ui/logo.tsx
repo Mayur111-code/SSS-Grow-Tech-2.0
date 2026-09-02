@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 
 export function Logo({
   className,
@@ -7,13 +8,21 @@ export function Logo({
   size = "md",
   textClassName,
   glow = false,
+  src,
 }: {
   className?: string;
   withText?: boolean;
   size?: "sm" | "md" | "lg";
   textClassName?: string;
   glow?: boolean;
+  src?: string;
 }) {
+  const { logo, siteName } = useSiteSettings();
+  const logoUrl = src || logo;
+
+  const words = siteName.trim().split(/\s+/);
+  const first = words.length > 1 ? `${words.slice(0, -1).join(" ")} ` : "";
+
   const dims = {
     sm: { box: "h-8 w-8", text: "text-base", img: 32 },
     md: { box: "h-10 w-10", text: "text-xl", img: 40 },
@@ -30,7 +39,7 @@ export function Logo({
         )}
       >
         <Image
-          src="/sssgrow.jpg"
+          src={logoUrl}
           alt="SSS Grow Tech"
           fill
           sizes={`${dims.img}px`}
@@ -46,7 +55,8 @@ export function Logo({
             textClassName
           )}
         >
-          SSS <span className="text-gradient">Grow Tech</span>
+          {first}
+          <span className="text-gradient">{words[words.length - 1]}</span>
         </span>
       )}
     </div>

@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 
 export function LoadingScreen() {
   const [loading, setLoading] = useState(true);
+  const { logo } = useSiteSettings();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1800);
@@ -63,7 +65,7 @@ export function LoadingScreen() {
             {/* Inner circle background */}
             <div className="relative flex h-[76px] w-[76px] items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200/60 dark:bg-[#0f101a] dark:ring-white/10">
               <Image
-                src="/sssgrow.jpg"
+                src={logo}
                 alt="SSS Grow Tech"
                 width={52}
                 height={52}

@@ -18,6 +18,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 
 const services = [
   { href: "/services/web-development", label: "Web Development" },
@@ -37,24 +38,29 @@ const company = [
   { href: "/contact", label: "Contact" },
 ];
 
-const socials = [
-  { href: "https://facebook.com", icon: Facebook, label: "Facebook" },
-  { href: "https://twitter.com", icon: Twitter, label: "Twitter" },
-  { href: "https://linkedin.com", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://instagram.com", icon: Instagram, label: "Instagram" },
-  { href: "https://github.com", icon: Github, label: "GitHub" },
-];
-
-const contactItems = [
-  { icon: Mail, label: "Support", value: "sssgrowtech@gmail.com", href: "mailto:sssgrowtech@gmail.com" },
-  { icon: Mail, label: "HR & Careers", value: "info.hr2200@gmail.com", href: "mailto:info.hr2200@gmail.com" },
-  { icon: Phone, label: "Phone", value: "+91 70285 07985", href: "tel:+917028507985" },
-  { icon: Phone, label: "Alternate", value: "+91 98342 32411", href: "tel:+919834232411" },
-  { icon: MapPin, label: "Office", value: "India · Serving clients worldwide" },
-];
-
 export function Footer() {
   const [subscribed, setSubscribed] = useState(false);
+  const { supportEmail, hrEmail, phone, phoneSecondary, address, social, settings } = useSiteSettings();
+  const copyright = (settings.copyright as string) || `© ${new Date().getFullYear()} SSS Grow Tech. All rights reserved.`;
+  const footerDesc =
+    (settings.footerText as string) ||
+    "Premium IT services agency delivering world-class software, web, mobile, AI and cloud solutions that help businesses grow and scale.";
+
+  const contactItems = [
+    { icon: Mail, label: "Support", value: supportEmail, href: `mailto:${supportEmail}` },
+    { icon: Mail, label: "HR & Careers", value: hrEmail, href: `mailto:${hrEmail}` },
+    { icon: Phone, label: "Phone", value: phone, href: `tel:${phone.replace(/[^\d+]/g, "")}` },
+    { icon: Phone, label: "Alternate", value: phoneSecondary, href: `tel:${phoneSecondary.replace(/[^\d+]/g, "")}` },
+    { icon: MapPin, label: "Office", value: address, href: undefined },
+  ];
+
+  const socialLinks = [
+    { href: social.facebook, icon: Facebook, label: "Facebook" },
+    { href: social.twitter, icon: Twitter, label: "Twitter" },
+    { href: social.linkedin, icon: Linkedin, label: "LinkedIn" },
+    { href: social.instagram, icon: Instagram, label: "Instagram" },
+    { href: social.github, icon: Github, label: "GitHub" },
+  ];
 
   const handleSubscribe = (e: FormEvent) => {
     e.preventDefault();
@@ -73,8 +79,7 @@ export function Footer() {
               <Logo />
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-              Premium IT services agency delivering world-class software, web, mobile, AI and cloud
-              solutions that help businesses grow and scale.
+              {footerDesc}
             </p>
 
             <div className="mt-7">
@@ -160,7 +165,7 @@ export function Footer() {
               ))}
             </ul>
             <div className="mt-6 flex gap-2.5">
-              {socials.map((social) => (
+              {socialLinks.map((social) => (
                 <motion.a
                   key={social.label}
                   href={social.href}
@@ -179,9 +184,7 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-5 border-t border-slate-200 pt-8 sm:flex-row dark:border-slate-800">
-          <p className="text-xs text-slate-400 dark:text-slate-500">
-            © {new Date().getFullYear()} SSS Grow Tech. All rights reserved.
-          </p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{copyright}</p>
           <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 dark:text-slate-500">
             <Link href="/privacy-policy" className="transition hover:text-brand-500">Privacy Policy</Link>
             <Link href="/terms" className="transition hover:text-brand-500">Terms of Service</Link>

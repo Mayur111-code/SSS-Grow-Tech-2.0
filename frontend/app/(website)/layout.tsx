@@ -8,7 +8,6 @@ import { Footer } from "@/components/layout/footer";
 import { FloatingCTA } from "@/components/layout/floating-cta";
 import { Particles } from "@/components/effects/particles";
 import { SmoothScroll } from "@/components/effects/smooth-scroll";
-import { usePublicSettings } from "@/services/queries";
 
 function ScrollToTop() {
   const pathname = usePathname();
@@ -19,7 +18,6 @@ function ScrollToTop() {
 }
 
 export default function WebsiteLayout({ children }: { children: React.ReactNode }) {
-  usePublicSettings();
   const pathname = usePathname();
 
   return (

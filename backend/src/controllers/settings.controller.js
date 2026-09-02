@@ -34,6 +34,7 @@ const DEFAULT_SETTINGS = [
   { key: 'favicon', group: 'branding', label: 'Favicon URL', value: '', type: 'image' },
   { key: 'supportEmail', group: 'contact', label: 'Support Email', value: 'sssgrowtech@gmail.com', type: 'text' },
   { key: 'contactEmail', group: 'contact', label: 'Contact Email', value: 'sssgrowtech@gmail.com', type: 'text' },
+  { key: 'hrEmail', group: 'contact', label: 'HR & Careers Email', value: 'info.hr2200@gmail.com', type: 'text' },
   { key: 'phone', group: 'contact', label: 'Phone', value: '+91 70285 07985', type: 'text' },
   { key: 'phoneSecondary', group: 'contact', label: 'Alternate Phone', value: '+91 98342 32411', type: 'text' },
   { key: 'address', group: 'contact', label: 'Address', value: 'India · Serving clients worldwide', type: 'text' },
@@ -104,12 +105,20 @@ export const updateSettings = asyncHandler(async (req, res) => {
 });
 
 export const initDefaultSettings = async () => {
-  const existing = await SiteSetting.countDocuments();
-  if (existing === 0) {
-    await SiteSetting.insertMany(DEFAULT_SETTINGS);
-    // eslint-disable-next-line no-console
-    console.log('Default site settings seeded');
+  const existing = await SiteSetting.find().lean();
+  if (existing.length > 0) {
+    const existingKeys = new Set(existing.map((d) => d.key));
+    const missing = DEFAULT_SETTINGS.filter((s) => !existingKeys.has(s.key));
+    if (missing.length > 0) {
+      await SiteSetting.insertMany(missing);
+      // eslint-disable-next-line no-console
+      console.log(`Seeded ${missing.length} missing site settings`);
+    }
+    return;
   }
+  await SiteSetting.insertMany(DEFAULT_SETTINGS);
+  // eslint-disable-next-line no-console
+  console.log('Default site settings seeded');
 };
 
 export const getPublicSettings = asyncHandler(async (req, res) => {

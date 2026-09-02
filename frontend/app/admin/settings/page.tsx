@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Save } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/admin-list";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ const groupOrder = ["general", "branding", "hero", "seo", "contact", "social", "
 
 export default function AdminSettingsPage() {
   const { success, error } = useToast();
+  const queryClient = useQueryClient();
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [imageOverrides, setImageOverrides] = useState<Record<string, ImageRef | null>>({});
   const [saving, setSaving] = useState(false);
@@ -58,6 +59,8 @@ export default function AdminSettingsPage() {
       const settings = Object.entries({ ...values, ...imageOverrides }).map(([key, value]) => ({ key, value }));
       await api.patch("/settings", { settings });
       setImageOverrides({});
+      queryClient.invalidateQueries({ queryKey: ["settings", "public"], refetchType: "active" });
+      queryClient.invalidateQueries({ queryKey: ["admin", "settings"] });
       success("Settings saved");
     } catch (err) {
       error(getErrorMessage(err));
@@ -76,7 +79,7 @@ export default function AdminSettingsPage() {
         logo: "branding", favicon: "branding",
         heroTitle: "hero", heroSubtitle: "hero", heroImage: "hero",
         description: "seo", keywords: "seo",
-        supportEmail: "contact", contactEmail: "contact", phone: "contact", phoneSecondary: "contact", address: "contact",
+        supportEmail: "contact", contactEmail: "contact", hrEmail: "contact", phone: "contact", phoneSecondary: "contact", address: "contact",
         facebook: "social", twitter: "social", linkedin: "social", instagram: "social", github: "social",
         stats: "home",
         footerText: "footer", copyright: "footer",
@@ -91,7 +94,7 @@ export default function AdminSettingsPage() {
       logo: "Logo", favicon: "Favicon",
       heroTitle: "Hero Title", heroSubtitle: "Hero Subtitle", heroImage: "Hero Image",
       description: "SEO Description", keywords: "SEO Keywords",
-      supportEmail: "Support Email", contactEmail: "Contact Email", phone: "Phone", phoneSecondary: "Alternate Phone", address: "Address",
+      supportEmail: "Support Email", contactEmail: "Contact Email", hrEmail: "HR & Careers Email", phone: "Phone", phoneSecondary: "Alternate Phone", address: "Address",
       facebook: "Facebook URL", twitter: "Twitter URL", linkedin: "LinkedIn URL", instagram: "Instagram URL", github: "GitHub URL",
       stats: "Home Stats (JSON)", footerText: "Footer Text", copyright: "Copyright",
     };

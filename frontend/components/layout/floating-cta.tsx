@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquareText, X, Mail, Phone } from "lucide-react";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 
 export function FloatingCTA() {
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const { supportEmail, phone } = useSiteSettings();
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 500);
@@ -32,18 +34,18 @@ export function FloatingCTA() {
             </div>
             <div className="space-y-3 p-4">
               <a
-                href="mailto:sssgrowtech@gmail.com"
+                href={`mailto:${supportEmail}`}
                 className="flex items-center gap-2.5 rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-600 transition hover:border-brand-500 hover:text-brand-500 dark:border-slate-700 dark:text-slate-300"
               >
                 <Mail className="h-4 w-4 shrink-0 text-brand-500" />
-                <span className="truncate">sssgrowtech@gmail.com</span>
+                <span className="truncate">{supportEmail}</span>
               </a>
               <a
-                href="tel:+917028507985"
+                href={`tel:${phone.replace(/[^\d+]/g, "")}`}
                 className="flex items-center gap-2.5 rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-600 transition hover:border-brand-500 hover:text-brand-500 dark:border-slate-700 dark:text-slate-300"
               >
                 <Phone className="h-4 w-4 shrink-0 text-brand-500" />
-                +91 70285 07985
+                {phone}
               </a>
               <Link
                 href="/contact"

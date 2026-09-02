@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { SiteSettingsProvider } from "@/contexts/SiteSettingsContext";
 import { ToastProvider } from "@/components/ui/toast";
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -24,7 +25,9 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <SiteSettingsProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </SiteSettingsProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
