@@ -26,7 +26,8 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 const contactInfo = [
-  { icon: Mail, label: "Email", value: "sssgrowtech@gmail.com", href: "mailto:sssgrowtech@gmail.com" },
+  { icon: Mail, label: "Support", value: "sssgrowtech@gmail.com", href: "mailto:sssgrowtech@gmail.com" },
+  { icon: Mail, label: "HR & Careers", value: "info.hr2200@gmail.com", href: "mailto:info.hr2200@gmail.com" },
   { icon: Phone, label: "Phone", value: "+91 70285 07985", href: "tel:+917028507985" },
   { icon: Phone, label: "Alternate", value: "+91 98342 32411", href: "tel:+919834232411" },
   { icon: Clock, label: "Hours", value: "Mon - Sat, 9:00 - 18:00 (IST)" },
