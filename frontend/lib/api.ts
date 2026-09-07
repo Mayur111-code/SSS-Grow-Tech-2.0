@@ -81,9 +81,34 @@ const processQueue = (error: unknown, token: string | null) => {
   failedQueue = [];
 };
 
-const refreshAccessToken = async (): Promise<string | null> => {
+/**
+ * Whether an error is a genuine authentication failure (401/403 from the API)
+ * as opposed to a transient network / server / CORS problem.
+ * Only genuine auth failures should invalidate the admin session.
+ */
+export const isGenuineAuthFailure = (error: unknown): boolean => {
+  if (axios.isAxiosError(error)) {
+    const status = error.response?.status;
+    return status === 401 || status === 403;
+  }
+  return false;
+};
+
+/**
+ * Attempts to refresh the access token.
+ * Returns a discriminated result:
+ *  - { ok: true, token } on success
+ *  - { ok: false, transient: true } for network/server/CORS failures (session preserved)
+ *  - { ok: false, transient: false } when no refresh token exists or the
+ *    refresh endpoint rejected the session as genuinely invalid (log out)
+ */
+const refreshAccessToken = async (): Promise<
+  { ok: true; token: string } | { ok: false; transient: boolean }
+> => {
   const refreshToken = tokenStore.getRefresh();
-  if (!refreshToken) return null;
+  if (!refreshToken) {
+    return { ok: false, transient: false };
+  }
 
   try {
     const response = await axios.post<ApiResponse<AuthTokens & { user: User }>>(`${API_URL}/auth/refresh-token`, {
@@ -94,9 +119,21 @@ const refreshAccessToken = async (): Promise<string | null> => {
     if (response.data.data.user) {
       tokenStore.setUser(response.data.data.user);
     }
-    return accessToken;
-  } catch {
-    return null;
+    return { ok: true, token: accessToken };
+  } catch (err) {
+    // A real 401/403 from the refresh endpoint means the session is invalid.
+    if (isGenuineAuthFailure(err)) {
+      return { ok: false, transient: false };
+    }
+    // Network error / server error / CORS: keep the session, report transient failure.
+    return { ok: false, transient: true };
+  }
+};
+
+const clearAuth = () => {
+  tokenStore.clear();
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("auth:logout"));
   }
 };
 
@@ -113,7 +150,10 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const original = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    if (error.response?.status === 401 && original && !original._retry && !original.url?.includes("/auth/")) {
+    const isAuthEndpoint = original?.url?.includes("/auth/");
+    const is401 = error.response?.status === 401;
+
+    if (is401 && original && !original._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -126,19 +166,26 @@ api.interceptors.response.use(
       original._retry = true;
       isRefreshing = true;
 
-      const newToken = await refreshAccessToken();
-      processQueue(newToken ? null : new Error("Refresh failed"), newToken);
-      isRefreshing = false;
+      const result = await refreshAccessToken();
 
-      if (newToken) {
-        original.headers.Authorization = `Bearer ${newToken}`;
+      if (result.ok) {
+        processQueue(null, result.token);
+        isRefreshing = false;
+        original.headers.Authorization = `Bearer ${result.token}`;
         return api(original);
       }
 
-      tokenStore.clear();
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("auth:logout"));
+      processQueue(new Error("Refresh failed"), null);
+      isRefreshing = false;
+
+      if (result.transient) {
+        // Transient network/server error during refresh → preserve the session.
+        // Reject the original request so callers can show an error/retry UI.
+        return Promise.reject(error);
       }
+
+      // Session is genuinely invalid (no refresh token or refresh rejected it).
+      clearAuth();
       return Promise.reject(error);
     }
 

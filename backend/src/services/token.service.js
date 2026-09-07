@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { ApiError } from '../utils/ApiError.js';
+import { sessionConfig } from '../config/session.js';
 
 const accessSecret = process.env.JWT_SECRET || 'sss_access_secret';
 const refreshSecret = process.env.JWT_REFRESH_SECRET || 'sss_refresh_secret';
-const accessExpiresIn = process.env.JWT_ACCESS_EXPIRES_IN || '15m';
-const refreshExpiresIn = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
+const accessExpiresIn = sessionConfig.accessTokenTtl;
+const refreshExpiresIn = sessionConfig.refreshTokenTtl;
 
 export const tokenService = {
   generateAccessToken(userId) {
@@ -40,7 +41,7 @@ export const tokenService = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 15 * 60 * 1000,
+      maxAge: sessionConfig.accessCookieMaxAgeMs,
       path: '/',
     };
   },
@@ -50,7 +51,7 @@ export const tokenService = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: sessionConfig.refreshCookieMaxAgeMs,
       path: '/',
     };
   },

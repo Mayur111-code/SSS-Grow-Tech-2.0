@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import axios from "axios";
-import api, { tokenStore } from "@/lib/api";
+import api, { tokenStore, isGenuineAuthFailure } from "@/lib/api";
 import { getErrorMessage } from "@/lib/api";
 import { API_URL } from "@/lib/utils";
 import type { ApiResponse, AuthTokens, User } from "@/types";
@@ -66,9 +66,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const me = response.data.data;
         setUserState(me);
         tokenStore.setUser(me);
-      } catch {
-        tokenStore.clear();
-        setUserState(null);
+      } catch (err) {
+        // Only invalidate the session on a genuine authentication failure.
+        // Transient network / server / CORS errors must NOT log the admin out.
+        if (isGenuineAuthFailure(err)) {
+          tokenStore.clear();
+          setUserState(null);
+        }
       } finally {
         setIsLoading(false);
       }
