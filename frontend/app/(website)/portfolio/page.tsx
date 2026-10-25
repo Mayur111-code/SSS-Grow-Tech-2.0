@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/ui/page-header";
+import { PortfolioHero } from "@/components/portfolio/portfolio-hero";
 import { PortfolioGrid } from "@/components/portfolio/portfolio-grid";
-import { HERO_IMAGES } from "@/lib/hero-images";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -12,16 +11,7 @@ export const metadata: Metadata = {
 export default function PortfolioPage() {
   return (
     <>
-      <PageHeader
-        badge="Our Portfolio"
-        title={
-          <>
-            Work that speaks for <span className="text-gradient">itself</span>
-          </>
-        }
-        description="A selection of projects we're proud of — from enterprise platforms to award-winning mobile apps."
-        image={HERO_IMAGES.portfolio}
-      />
+      <PortfolioHero />
       <PortfolioGrid />
     </>
   );
